@@ -27,7 +27,7 @@ services:
     container_name: openldap-ui
     hostname: openldap-ui
     ports:
-      - 80:80
+      - 8080:80
     environment:
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
       - PHPLDAPADMIN_HTTPS=false
