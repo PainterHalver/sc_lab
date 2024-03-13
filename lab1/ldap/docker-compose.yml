@@ -17,6 +17,7 @@ services:
       - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PASSWORD:-admin}
       - LDAP_CONFIG_PASSWORD=${LDAP_CONFIG_PASSWORD:-config}
       - LDAP_BASE_DN=dc=daohiep,dc=me
+      - LDAP_RFC2307BIS_SCHEMA=true
       - LDAP_TLS_VERIFY_CLIENT=never
       - LDAP_TLS=false
     networks:
