@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Install required packages
+yum install -y openldap-clients sssd sssd-ldap oddjob-mkhomedir
+
+######################################
+# Configure SSSD to use LDAP
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_authentication_and_authorization_in_rhel/configuring-sssd-to-use-ldap-and-require-tls-authentication_configuring-authentication-and-authorization-in-rhel
+######################################
+cat <<EOF > /etc/sssd/sssd.conf
+[domain/default]
+id_provider = ldap
+autofs_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+ldap_uri = ldap://${ldap_domain}/
+ldap_search_base = dc=daohiep,dc=me
+ldap_id_use_start_tls = false
+cache_credentials = False
+ldap_tls_reqcert = never
+ldap_default_bind_dn = cn=admin,dc=daohiep,dc=me
+ldap_default_authtok_type = password
+ldap_default_authtok = ${ldap_admin_password}
+ldap_schema = rfc2307bis
+
+[sssd]
+services = nss, pam, autofs
+domains = default
+
+[nss]
+homedir_substring = /home
+EOF
+
+chmod 600 /etc/sssd/sssd.conf
+chown root:root /etc/sssd/sssd.conf
+update-crypto-policies --set LEGACY
+
+# Switch the authentication provider to sssd
+authselect select sssd with-mkhomedir --force
+
+# Enable SSH password authentication
+echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
+
+# Restart the SSH service and enable SSSD
+systemctl restart sshd
+systemctl enable sssd oddjobd --now
+

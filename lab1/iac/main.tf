@@ -5,6 +5,16 @@ resource "aws_instance" "ec2_app" {
 
   vpc_security_group_ids = [ aws_security_group.ec2_app_sg.id ]
 
+  root_block_device {
+    delete_on_termination = true
+    volume_size = 10
+  }
+
+  user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
+    ldap_domain = var.ldap_domain
+    ldap_admin_password = var.ldap_admin_password
+  })
+
   tags = var.default_tags
 }
 

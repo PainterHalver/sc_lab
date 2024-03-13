@@ -5,3 +5,5 @@ default_tags = {
   "CreatedBy" = "Terraform",
   "Lab" = "1"
 }
+
+ldap_domain = "ldap.daohiep.me"

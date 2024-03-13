@@ -13,3 +13,13 @@ variable "default_tags" {
   type = map(string)
   default = {}
 }
+
+variable "ldap_domain" {
+  description = "The domain name of the LDAP server"
+  default = "ldap.daohiep.me"
+}
+
+variable "ldap_admin_password" {
+  description = "The password for the LDAP admin user"
+  # default = "admin"
+}
