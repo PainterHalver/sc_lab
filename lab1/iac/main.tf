@@ -1,22 +1,22 @@
-resource "aws_instance" "ec2_app" {
-  ami = data.aws_ami.rhel9.id
-  instance_type = var.instance_type
-  key_name = aws_key_pair.ssh_pubkey.key_name
+# resource "aws_instance" "ec2_app" {
+#   ami = data.aws_ami.rhel9.id
+#   instance_type = var.instance_type
+#   key_name = aws_key_pair.ssh_pubkey.key_name
 
-  vpc_security_group_ids = [ aws_security_group.ec2_app_sg.id ]
+#   vpc_security_group_ids = [ aws_security_group.ec2_app_sg.id ]
 
-  root_block_device {
-    delete_on_termination = true
-    volume_size = 10
-  }
+#   root_block_device {
+#     delete_on_termination = true
+#     volume_size = 10
+#   }
 
-  user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
-    ldap_domain = var.ldap_domain
-    ldap_admin_password = var.ldap_admin_password
-  })
+#   user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
+#     ldap_domain = var.ldap_domain
+#     ldap_admin_password = var.ldap_admin_password
+#   })
 
-  tags = var.default_tags
-}
+#   tags = var.default_tags
+# }
 
 resource "aws_key_pair" "ssh_pubkey" {
   key_name = "ssh-pubkey"
@@ -41,6 +41,6 @@ resource "aws_security_group" "ec2_app_sg" {
   }
 }
 
-output "ec2_app_public_ip" {
-  value = aws_instance.ec2_app.public_ip
-}
+# output "ec2_app_public_ip" {
+#   value = aws_instance.ec2_app.public_ip
+# }

@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Install required packages
+yum install -y 389-ds-base wget \
+  php php-gd php-ldap # For phpLDAPadmin
+
+######################################
+# Configure LDAP
+######################################
+# https://www.port389.org/docs/389ds/howto/quickstart.html
+cat <<EOF > /root/instance.inf
+[general]
+config_version = 2
+
+[slapd]
+root_password = ${ ldap_admin_password }
+
+[backend-userroot]
+sample_entries = yes
+suffix = dc=example,dc=com
+EOF
+
+# Install 389DS instance, takes a while
+dscreate from-file /root/instance.inf
+
+# To make administration easier, we can indicate through a config how to connect to the directory server. This is a file called ~/.dsrc
+cat <<EOF > /root/.dsrc
+[localhost]
+# Note that '/' is replaced to '%%2f'.
+uri = ldapi://%%2fvar%%2frun%%2fslapd-localhost.socket
+basedn = dc=example,dc=com
+binddn = cn=Directory Manager
+EOF
+
+# Add a user
+dsidm localhost user create --uid john --cn John --displayName 'John Doe' --uidNumber 1001 --gidNumber 1001 --homeDirectory /home/john
+
+# Change the password of the user to 'ldap123'
+dsidm localhost account reset_password uid=john,ou=people,dc=example,dc=com ldap123
+
+# Change description of the user
+dsidm localhost user modify john "add:description:Test User John"
+
+######################################
+# Configure phpLDAPadmin
+######################################
+
+# Download and install phpLDAPadmin rpm
+wget https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/Packages/p/phpldapadmin-1.2.6.6-1.el9.noarch.rpm
+rpm -Uvh phpldapadmin-1.2.6.6-1.el9.noarch.rpm
+rm -rf phpldapadmin-1.2.6.6-1.el9.noarch.rpm
+
+# Update phpLDAPadmin httpd file to listen on all interfaces
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/httpd/conf.d/phpldapadmin.conf
+sed -i 's/Require local/Require all granted/g' /etc/httpd/conf.d/phpldapadmin.conf
+
+# Start httpd service
+systemctl enable httpd --now
+
+# Set SELinux booleans
+setsebool -P httpd_can_connect_ldap on
+
+# Use dn instead of uid for login
+sed -i "s/'attr','uid'/'attr','dn'/g" /etc/phpldapadmin/config.php
