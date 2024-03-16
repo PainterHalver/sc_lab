@@ -1,3 +1,8 @@
+variable "aws_region" {
+  description = "The AWS region to deploy resources"
+  default = "ap-southeast-1"
+}
+
 variable "instance_type" {
   description = "The general type of instance to launch"
   default = "t2.micro"
