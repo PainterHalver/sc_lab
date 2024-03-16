@@ -4,6 +4,7 @@ resource "aws_instance" "ec2_ldap" {
   key_name = aws_key_pair.ssh_pubkey.key_name
 
   vpc_security_group_ids = [ aws_security_group.ec2_ldap_sg.id ]
+  iam_instance_profile = aws_iam_instance_profile.ec2_cloudwatch_instance_profile.name
 
   root_block_device {
     delete_on_termination = true

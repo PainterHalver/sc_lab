@@ -66,3 +66,44 @@ setsebool -P httpd_can_connect_ldap on
 
 # Use dn instead of uid for login
 sed -i "s/'attr','uid'/'attr','dn'/g" /etc/phpldapadmin/config.php
+
+##########################################
+# Configure Cloudwatch agent
+##########################################
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html
+
+# Install the CloudWatch agent
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/redhat/amd64/latest/amazon-cloudwatch-agent.rpm
+rpm -U amazon-cloudwatch-agent.rpm
+rm -rf amazon-cloudwatch-agent.rpm
+
+# Create the CloudWatch agent configuration file
+# https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
+
+cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/dirsrv/slapd-localhost/access",
+            "log_group_name": "LDAPAccessLog",
+            "log_stream_name": "LDAPAccessLog - {instance_id}",
+            "retention_in_days": 3
+          },
+          {
+            "file_path": "/var/log/dirsrv/slapd-localhost/errors",
+            "log_group_name": "LDAPErrorLog",
+            "log_stream_name": "LDAPErrorLog - {instance_id}",
+            "retention_in_days": 3
+          }
+        ]
+      }
+    }
+  }
+}
+EOF
+
+# Start the CloudWatch agent
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json

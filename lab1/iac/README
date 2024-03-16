@@ -1,1 +1,2 @@
-Set `ldap_admin_password` var
+- Config S3 backend
+- Set `ldap_admin_password` var
