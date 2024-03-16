@@ -17,11 +17,11 @@ autofs_provider = ldap
 auth_provider = ldap
 chpass_provider = ldap
 ldap_uri = ldap://${ldap_domain}/
-ldap_search_base = dc=daohiep,dc=me
+ldap_search_base = dc=example,dc=com
 ldap_id_use_start_tls = false
 cache_credentials = False
 ldap_tls_reqcert = never
-ldap_default_bind_dn = cn=admin,dc=daohiep,dc=me
+ldap_default_bind_dn = cn=Directory Manager
 ldap_default_authtok_type = password
 ldap_default_authtok = ${ldap_admin_password}
 ldap_schema = rfc2307bis

@@ -14,7 +14,9 @@ resource "aws_instance" "ec2_ldap" {
     ldap_admin_password = var.ldap_admin_password
   })
 
-  tags = var.default_tags
+  tags = merge(var.default_tags, {
+    Name = "ec2-ldap"
+  })
 }
 
 resource "aws_security_group" "ec2_ldap_sg" {
@@ -34,12 +36,12 @@ resource "aws_security_group" "ec2_ldap_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # ingress {
-  #   from_port = 389
-  #   to_port = 389
-  #   protocol = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  ingress {
+    from_port = 389
+    to_port = 389
+    protocol = "tcp"
+    security_groups = [aws_security_group.ec2_app_sg.id]
+  }
 
   egress {
     from_port = 0

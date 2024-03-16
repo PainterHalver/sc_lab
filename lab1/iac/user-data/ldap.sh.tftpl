@@ -36,6 +36,7 @@ binddn = cn=Directory Manager
 EOF
 
 # Add a user
+# ObjectClasses: nsPerson, nsAccount, nsOrgPerson, posixAccount
 dsidm localhost user create --uid john --cn John --displayName 'John Doe' --uidNumber 1001 --gidNumber 1001 --homeDirectory /home/john
 
 # Change the password of the user to 'ldap123'
