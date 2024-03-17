@@ -1,4 +1,4 @@
-aws_region = "ap-southeast-2"
+aws_region = "ap-northeast-1"
 instance_type = "t2.micro"
 ssh_pubkey_path = "~/.ssh/id_rsa.pub"
 

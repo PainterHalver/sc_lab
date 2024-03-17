@@ -1,6 +1,6 @@
 variable "aws_region" {
   description = "The AWS region to deploy resources"
-  default = "ap-southeast-2"
+  nullable = false
 }
 
 variable "instance_type" {
@@ -27,4 +27,9 @@ variable "ldap_domain" {
 variable "ldap_admin_password" {
   description = "The password for the LDAP admin user"
   # default = "admin"
+}
+
+variable "notification_email" {
+  description = "The email address to send notifications to"
+  nullable = false
 }

@@ -1,3 +1,34 @@
+resource "aws_sns_topic" "ec2_app_alert" {
+    name = "ec2-app-alert-topic"
+}
+
+resource "aws_sns_topic_subscription" "email_subscription" {
+  topic_arn = aws_sns_topic.ec2_app_alert.arn
+  protocol = "email"
+  endpoint = var.notification_email
+}
+
+resource "aws_cloudwatch_metric_alarm" "ec2_app_cpu_alarm" {
+    alarm_name = "ec2-app-cpu-alarm"
+    alarm_description = "CPU Utilization is more than 85% for 2 consecutive periods of 10 seconds"
+
+    comparison_operator = "LessThanThreshold"
+    period = 10
+    evaluation_periods = 2
+    namespace = "CWAgent"
+    metric_name = "cpu_usage_idle"
+    threshold = 15
+    statistic = "Average"
+
+    dimensions = {
+        host = aws_instance.ec2_app.private_dns
+        cpu = "cpu-total"
+    }
+
+    alarm_actions = [ aws_sns_topic.ec2_app_alert.arn ]
+    ok_actions = [ aws_sns_topic.ec2_app_alert.arn ]
+}
+
 resource "aws_cloudwatch_dashboard" "ec2_app_dashboard" {
   dashboard_name = "ec2-app-dashboard"
   dashboard_body = jsonencode({
@@ -10,14 +41,8 @@ resource "aws_cloudwatch_dashboard" "ec2_app_dashboard" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [
-                      "CWAgent",
-                      "disk_used_percent",
-                      "host",
-                      aws_instance.ec2_app.private_dns,
-                      "device", "xvda4", "fstype", "xfs", { "region": var.aws_region }
-                    ],
-                    [ ".", "disk_used_percent", ".", ".", ".", ".", ".", ".", ".", ".", { "region": var.aws_region } ]
+                    [ "CWAgent", "disk_total", "path", "/", "host", aws_instance.ec2_app.private_dns, "device", "xvda4", "fstype", "xfs", { "id": "m3" } ],
+        [ ".", "disk_used_percent", ".", ".", ".", ".", ".", ".", ".", ".", { "id": "m4" } ]
                 ],
                 "view": "singleValue",
                 "region": var.aws_region,

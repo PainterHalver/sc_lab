@@ -65,7 +65,7 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
   "metrics": {
     "metrics_collected": {
       "cpu": {
-        "metrics_collection_interval": 20,
+        "metrics_collection_interval": 10,
         "measurement": [
           "cpu_usage_idle",
           "cpu_usage_iowait",
@@ -74,7 +74,7 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
         ]
       },
       "mem": {
-        "metrics_collection_interval": 20,
+        "metrics_collection_interval": 10,
         "measurement": [
           "mem_used_percent"
         ]
@@ -88,7 +88,7 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
           "total",
           "used_percent"
         ],
-        "metrics_collection_interval": 20
+        "metrics_collection_interval": 10
       }
     }
   }

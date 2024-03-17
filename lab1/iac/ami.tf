@@ -4,6 +4,6 @@ data "aws_ami" "rhel9" {
 
   filter {
     name = "image-id"
-    values = [ "ami-09b1e8fc6368b8a3a" ]
+    values = [ "ami-0014871499315f25a" ]
   }
 }
