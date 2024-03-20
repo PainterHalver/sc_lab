@@ -1,27 +1,32 @@
 variable "aws_region" {
   description = "The AWS region to deploy resources"
-  nullable = false
+  nullable    = false
+}
+
+variable "aws_availability_zone" {
+  description = "The availability zone to deploy resources"
+  nullable    = false
 }
 
 variable "instance_type" {
   description = "The general type of instance to launch"
-  default = "t2.micro"
+  default     = "t2.micro"
 }
 
 variable "ssh_pubkey_path" {
   description = "The path to the public key used for SSH access"
-  default = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "default_tags" {
   description = "The default tags to apply to all resources"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 variable "ldap_domain" {
   description = "The domain name of the LDAP server"
-  default = "ldap.daohiep.me"
+  nullable    = false
 }
 
 variable "ldap_admin_password" {
@@ -31,5 +36,5 @@ variable "ldap_admin_password" {
 
 variable "notification_email" {
   description = "The email address to send notifications to"
-  nullable = false
+  nullable    = false
 }

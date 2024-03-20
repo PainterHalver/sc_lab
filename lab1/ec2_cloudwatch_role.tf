@@ -1,7 +1,7 @@
 // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html
 
 resource "aws_iam_role" "ec2_cloudwatch_role" {
-  name = "CloudWatchAgentServerRole"
+  name        = "CloudWatchAgentServerRole"
   description = "Role for EC2 CloudWatch agent"
 
   assume_role_policy = jsonencode({
@@ -28,7 +28,7 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
           Action = [
             "logs:PutRetentionPolicy"
           ],
-          Effect = "Allow",
+          Effect   = "Allow",
           Resource = "*"
         }
       ]
@@ -39,7 +39,7 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_agent_server_role" {
-  role = aws_iam_role.ec2_cloudwatch_role.name
+  role       = aws_iam_role.ec2_cloudwatch_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
