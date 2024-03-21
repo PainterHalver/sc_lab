@@ -48,7 +48,7 @@ resource "aws_security_group" "ec2_ldap_sg" {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
-    security_groups = [aws_security_group.nlb_sg.id]
+    security_groups = [aws_security_group.clb_sg.id]
   }
 
   egress {

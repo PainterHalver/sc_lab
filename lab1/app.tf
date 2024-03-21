@@ -16,7 +16,7 @@ resource "aws_instance" "ec2_app" {
   }
 
   user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
-    ldap_domain         = aws_lb.ldap_nlb.dns_name
+    ldap_domain         = aws_elb.ldap_clb.dns_name
     ldap_admin_password = var.ldap_admin_password
   })
 

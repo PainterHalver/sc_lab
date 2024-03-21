@@ -10,6 +10,10 @@ output "ec2_nat_public_ip" {
   value = module.vpc_ldap.nat_public_ip
 }
 
-output "nlb_dns_name" {
-  value = aws_lb.ldap_nlb.dns_name
+output "clb_dns_name" {
+  value = aws_elb.ldap_clb.dns_name
 }
+
+# output "nlb_dns_name" {
+#   value = aws_lb.ldap_nlb.dns_name
+# }
