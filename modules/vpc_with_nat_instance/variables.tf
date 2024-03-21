@@ -23,3 +23,7 @@ variable "default_tags" {
   nullable = true
   default  = {}
 }
+
+variable "ssh_pubkey_path" {
+  type = string
+}

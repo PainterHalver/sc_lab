@@ -5,7 +5,7 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(
     {
-      "Name" = "Terraform VPC"
+      "Name" = "Terraform VPC With NAT Instance"
     },
     var.default_tags
   )
