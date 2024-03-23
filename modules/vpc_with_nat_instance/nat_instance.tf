@@ -20,6 +20,7 @@ resource "aws_key_pair" "ssh_pubkey_nat" {
 }
 
 resource "aws_security_group" "sg_nat" {
+  name   = "ec2-nat-sg"
   vpc_id = aws_vpc.vpc.id
 
   ingress {
