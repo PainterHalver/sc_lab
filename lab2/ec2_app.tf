@@ -16,7 +16,7 @@ resource "aws_instance" "ec2_app" {
   }
 
   user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
-
+    proxy_address = "${aws_instance.ec2_proxy.private_ip}:3128"
   })
 
   tags = merge(var.default_tags, {
