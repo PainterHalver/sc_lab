@@ -1,4 +1,0 @@
-- Config S3 backend
-- Set `ldap_admin_password` var
-- Stress cpu: `stress-ng --cpu 0 --cpu-load 70`
-- Stress memory: `stress-ng --vm 2 --vm-bytes 256M --vm-keep`
