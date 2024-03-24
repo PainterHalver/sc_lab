@@ -23,3 +23,8 @@ variable "default_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "notification_email" {
+  description = "The email address to send notifications to"
+  type        = string
+}

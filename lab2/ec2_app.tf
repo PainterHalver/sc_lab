@@ -16,6 +16,7 @@ resource "aws_instance" "ec2_app" {
   }
 
   user_data = templatefile("${path.module}/user-data/app.sh.tftpl", {
+    sns_topic_arn = aws_sns_topic.ec2_app_stop_alert.arn
     proxy_address = "${aws_instance.ec2_proxy.private_ip}:3128"
   })
 

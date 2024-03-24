@@ -43,6 +43,12 @@ resource "aws_iam_role_policy_attachment" "ec2_agent_server_role" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
+# Role to publish messages to SNS
+resource "aws_iam_role_policy_attachment" "ec2_agent_sns_role" {
+  role       = aws_iam_role.ec2_cloudwatch_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
+}
+
 # Attach this to EC2
 resource "aws_iam_instance_profile" "ec2_cloudwatch_instance_profile" {
   name = "CloudWatchAgentServerProfile"

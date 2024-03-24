@@ -1,0 +1,3 @@
+- Set app proxy through Shell environment variables
+- Alert SNS when app is stopped
+- Set `notification_email` var: The email to send SNS notifications to

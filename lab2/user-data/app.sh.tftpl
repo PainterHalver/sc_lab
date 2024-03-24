@@ -3,7 +3,13 @@
 set -exo pipefail
 
 # Install required packages
-yum install -y python3 wget
+yum install -y python3 wget unzip
+
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+rm -rf awscliv2.zip aws
 
 # Write python file
 cat <<EOF > /opt/quote.py
@@ -13,24 +19,16 @@ import datetime
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-PROXY_ADDRESS = '${proxy_address}'
-session = requests.Session()
-
-session.proxies.update({
-    'http': 'http://' + PROXY_ADDRESS,
-    'https': 'http://' + PROXY_ADDRESS
-})
-
 def get_random_quote():
     url = 'https://api.quotable.io/random'
-    response = session.get(url, verify=False)
+    response = requests.get(url, verify=False)
     quote = response.json()
     return [quote['content'], quote['author']]
 
 while True:
     content, author = get_random_quote()
     print(f'Quote: {content} - {author} - {datetime.datetime.now()}')
-    time.sleep(60)
+    time.sleep(30)
 EOF
 
 # Add to systemd
@@ -42,11 +40,16 @@ After=multi-user.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/python3 /opt/quote.py
+ExecStopPost=/usr/local/bin/aws sns publish --topic-arn ${sns_topic_arn} --message "For some reason the quote app has been stopped" --subject "Quote App Stopped"
 Restart=always
 User=root
 StandardOutput=file:/var/log/quote.log
 StandardError=file:/var/log/quote.log
 Environment=PYTHONUNBUFFERED=1
+Environment=HTTP_PROXY=http://${proxy_address}
+Environment=HTTPS_PROXY=http://${proxy_address}
+Environment=http_proxy=http://${proxy_address}
+Environment=https_proxy=http://${proxy_address}
 
 [Install]
 WantedBy=multi-user.target
