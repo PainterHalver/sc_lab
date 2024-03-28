@@ -48,6 +48,15 @@ echo "PasswordAuthentication yes" > /etc/ssh/sshd_config.d/50-cloud-init.conf
 systemctl restart sshd
 systemctl enable sssd oddjobd --now
 
+# Create sudo group for LDAP users with GID 2000
+groupadd -g 2000 ldap-users
+
+# Add sudo permissions for the LDAP users
+cat <<EOF > /etc/sudoers.d/ldap-users
+%ldap-users ALL=(ALL) ALL
+EOF
+
+
 ##########################################
 # Configure Cloudwatch agent
 ##########################################

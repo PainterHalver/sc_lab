@@ -37,7 +37,7 @@ EOF
 
 # Add a user
 # ObjectClasses: nsPerson, nsAccount, nsOrgPerson, posixAccount
-dsidm localhost user create --uid john --cn John --displayName 'John Doe' --uidNumber 1001 --gidNumber 1001 --homeDirectory /home/john
+dsidm localhost user create --uid john --cn John --displayName 'John Doe' --uidNumber 1001 --gidNumber 2000 --homeDirectory /home/john
 
 # Change the password of the user to 'ldap123'
 dsidm localhost account reset_password uid=john,ou=people,dc=example,dc=com ldap123
