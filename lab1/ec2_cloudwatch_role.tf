@@ -17,23 +17,12 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
     ]
   })
 
-  // Allow setting log retention
-  // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html#CloudWatch-Agent-PutLogRetention
-  inline_policy {
-    name = "CloudWatchAgentPutLogsRetention"
-    policy = jsonencode({
-      Version = "2012-10-17",
-      Statement = [
-        {
-          Action = [
-            "logs:PutRetentionPolicy"
-          ],
-          Effect   = "Allow",
-          Resource = "*"
-        }
-      ]
-    })
-  }
+  tags = var.default_tags
+}
+
+resource "aws_cloudwatch_log_group" "lab1_log_group" {
+  name              = "LAB-1"
+  retention_in_days = 1
 
   tags = var.default_tags
 }

@@ -88,15 +88,13 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
         "collect_list": [
           {
             "file_path": "/var/log/dirsrv/slapd-localhost/access",
-            "log_group_name": "LDAPAccessLog",
-            "log_stream_name": "LDAPAccessLog - {instance_id}",
-            "retention_in_days": 3
+            "log_group_name": "LAB-1",
+            "log_stream_name": "LDAPAccessLog - {instance_id}"
           },
           {
             "file_path": "/var/log/dirsrv/slapd-localhost/errors",
-            "log_group_name": "LDAPErrorLog",
-            "log_stream_name": "LDAPErrorLog - {instance_id}",
-            "retention_in_days": 3
+            "log_group_name": "LAB-1",
+            "log_stream_name": "LDAPErrorLog - {instance_id}"
           }
         ]
       }

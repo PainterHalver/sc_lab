@@ -24,11 +24,6 @@ variable "default_tags" {
   default     = {}
 }
 
-variable "ldap_domain" {
-  description = "The domain name of the LDAP server"
-  nullable    = false
-}
-
 variable "ldap_admin_password" {
   description = "The password for the LDAP admin user"
   # default = "admin"
