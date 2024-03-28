@@ -32,7 +32,6 @@ resource "aws_elb" "ldap_clb" {
   idle_timeout              = 60   // default
 }
 
-// TODO: Resrtict the source IP
 resource "aws_security_group" "clb_sg" {
   name   = "ldap-clb-sg"
   vpc_id = module.vpc_ldap.vpc_id
