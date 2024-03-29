@@ -1,5 +1,3 @@
-// https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html
-
 resource "aws_iam_role" "ec2_cloudwatch_role" {
   name        = "CloudWatchAgentServerRole"
   description = "Role for EC2 CloudWatch agent"
@@ -17,19 +15,17 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
     ]
   })
 
-  // Allow setting log retention
-  // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html#CloudWatch-Agent-PutLogRetention
   inline_policy {
-    name = "CloudWatchAgentPutLogsRetention"
+    name = "AppDownAlertSNSRole"
     policy = jsonencode({
       Version = "2012-10-17",
       Statement = [
         {
           Action = [
-            "logs:PutRetentionPolicy"
+            "sns:Publish"
           ],
           Effect   = "Allow",
-          Resource = "*"
+          Resource = aws_sns_topic.ec2_app_stop_alert.arn
         }
       ]
     })
@@ -38,15 +34,16 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
   tags = var.default_tags
 }
 
+resource "aws_cloudwatch_log_group" "lab1_log_group" {
+  name              = "LAB-2"
+  retention_in_days = 1
+
+  tags = var.default_tags
+}
+
 resource "aws_iam_role_policy_attachment" "ec2_agent_server_role" {
   role       = aws_iam_role.ec2_cloudwatch_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-}
-
-# Role to publish messages to SNS
-resource "aws_iam_role_policy_attachment" "ec2_agent_sns_role" {
-  role       = aws_iam_role.ec2_cloudwatch_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
 }
 
 # Attach this to EC2

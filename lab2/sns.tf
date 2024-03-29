@@ -1,5 +1,5 @@
 resource "aws_sns_topic" "ec2_app_stop_alert" {
-  name = "ec2-quote-app-stop-alert-topic"
+  name = "ec2-quote-app-stop-alert"
 
   tags = var.default_tags
 }
