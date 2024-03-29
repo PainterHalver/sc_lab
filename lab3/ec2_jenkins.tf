@@ -8,6 +8,11 @@ resource "aws_instance" "ec2_jenkins" {
     volume_size           = 10
   }
 
+  network_interface {
+    network_interface_id = aws_network_interface.jenkins_eni.id
+    device_index         = 0
+  }
+
   user_data = templatefile("${path.module}/user-data/jenkins.sh.tftpl", {
 
   })
@@ -17,7 +22,7 @@ resource "aws_instance" "ec2_jenkins" {
   })
 }
 
-resource "aws_network_interface" "app_eni" {
+resource "aws_network_interface" "jenkins_eni" {
   subnet_id       = module.vpc.public_subnet_id
   security_groups = [aws_security_group.jenkins_sg.id]
 
@@ -31,6 +36,14 @@ resource "aws_security_group" "jenkins_sg" {
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Jenkins web UI
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
