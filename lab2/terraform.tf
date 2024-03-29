@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.7, < 2.0.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -6,11 +8,11 @@ terraform {
     }
   }
 
-  # backend "s3" {
-  #   bucket = "nazii"
-  #   key = "terraform/lab-2/terraform.tfstate"
-  #   region = "ap-northeast-2"
-  # }
+  backend "s3" {
+    bucket = "nazii"
+    key    = "terraform/lab-2/terraform.tfstate"
+    region = "ap-northeast-2"
+  }
 }
 
 # Configure the AWS Provider
