@@ -16,6 +16,22 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
   })
 
   inline_policy {
+    name = "CloudWatchAgentPutLogsRetention"
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+          Action = [
+            "logs:PutRetentionPolicy"
+          ],
+          Effect   = "Allow",
+          Resource = "arn:aws:logs:*:*:log-group:LAB-2:*"
+        }
+      ]
+    })
+  }
+
+  inline_policy {
     name = "AppDownAlertSNSRole"
     policy = jsonencode({
       Version = "2012-10-17",
@@ -30,13 +46,6 @@ resource "aws_iam_role" "ec2_cloudwatch_role" {
       ]
     })
   }
-
-  tags = var.default_tags
-}
-
-resource "aws_cloudwatch_log_group" "lab1_log_group" {
-  name              = "LAB-2"
-  retention_in_days = 1
 
   tags = var.default_tags
 }

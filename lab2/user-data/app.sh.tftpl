@@ -79,7 +79,8 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
           {
             "file_path": "/var/log/quote.log",
             "log_group_name": "LAB-2",
-            "log_stream_name": "AppQuoteLog - {instance_id}"
+            "log_stream_name": "AppQuoteLog - {instance_id}",
+            "retention_in_days": 1
           }
         ]
       }
