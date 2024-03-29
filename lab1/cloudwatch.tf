@@ -1,5 +1,5 @@
 resource "aws_sns_topic" "ec2_app_alert" {
-  name = "ec2-app-alert-topic"
+  name = "ec2-app-alert"
 }
 
 resource "aws_sns_topic_subscription" "email_subscription" {

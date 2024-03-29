@@ -1,4 +1,4 @@
-- Stress cpu: `stress-ng --cpu 0 --cpu-load 70`
+- Stress cpu: `stress-ng --cpu 0 --cpu-load 90`
 - Stress memory: `stress-ng --vm 2 --vm-bytes 256M --vm-keep`
 - Example ldap user: `john:ldap123`
 

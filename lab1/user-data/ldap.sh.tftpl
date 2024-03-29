@@ -45,6 +45,21 @@ dsidm localhost account reset_password uid=john,ou=people,dc=example,dc=com ldap
 # Change description of the user
 dsidm localhost user modify john "add:description:Test User John"
 
+# Add jane to the admins group
+dsidm localhost user create --uid jane --cn Jane --displayName 'Jane Doe' --uidNumber 1002 --gidNumber 2000 --homeDirectory /home/jane
+dsidm localhost account reset_password uid=jane,ou=people,dc=example,dc=com ldap123
+dsidm localhost group create --cn=admins
+dsidm localhost group add_member admins uid=jane,ou=people,dc=example,dc=com
+
+# Enable member of plugin
+dsconf localhost plugin memberof enable
+dsctl localhost restart
+
+# Set scope of memberof plugin
+dsconf localhost plugin memberof set --scope dc=example,dc=com
+dsidm localhost user modify jane add:objectclass:nsmemberof
+dsconf localhost plugin memberof fixup dc=example,dc=com
+
 ######################################
 # Configure phpLDAPadmin
 ######################################
