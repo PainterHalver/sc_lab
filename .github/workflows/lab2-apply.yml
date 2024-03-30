@@ -1,4 +1,4 @@
-name: lab-1-terraform-apply
+name: lab-2-terraform-apply
 on: [workflow_dispatch]
 jobs:
   terraform:
@@ -10,7 +10,7 @@ jobs:
       TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
     defaults:
       run:
-        working-directory: lab1
+        working-directory: lab2
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
