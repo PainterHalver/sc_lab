@@ -17,7 +17,6 @@ module "vpc_ldap" {
   ssh_pubkey_path     = var.ssh_pubkey_path
 }
 
-
 resource "aws_key_pair" "ssh_pubkey" {
   key_name   = "ssh-pubkey"
   public_key = file(var.ssh_pubkey_path)
