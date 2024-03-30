@@ -1,19 +1,14 @@
-name: validate-lab-1
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - "lab-1/**"
-  workflow_dispatch:
+name: lab-1-terraform-destroy
+on: [workflow_dispatch]
 jobs:
-  validate:
-    name: Validate Terraform
+  terraform:
+    name: Terraform plan and destroy
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
+      TF_LOG: DEBUG
     defaults:
       run:
         working-directory: lab1
@@ -27,8 +22,11 @@ jobs:
       - name: Import Public Key
         run: mkdir -p ~/.ssh && echo '${{ secrets.SSH_PUBLIC_KEY }}' > ~/.ssh/id_rsa.pub
 
-      - name: Terraform Init, Validate, Format
-        run: |
-          terraform init
-          terraform validate
-          terraform fmt -check
+      - name: Terraform Init
+        run: terraform init -reconfigure
+
+      - name: Terraform Plan
+        run: terraform plan -destroy -out=destroy.tfplan
+
+      - name: Terraform Destroy
+        run: terraform apply -auto-approve destroy.tfplan
