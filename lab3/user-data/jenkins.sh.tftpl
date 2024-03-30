@@ -12,12 +12,12 @@ yum install -y fontconfig java-17-openjdk
 yum install -y jenkins
 
 # Disable Jenkins post-installation setup wizard add JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-sed -i 's/Environment="JAVA_OPTS=-Djava.awt.headless=true"/Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"/' /usr/lib/systemd/system/jenkins.service
-
-# Add CASC_JENKINS_CONFIG environment variable, append under any Environment= line, don't add if it already exists
-if ! grep -q 'CASC_JENKINS_CONFIG' /usr/lib/systemd/system/jenkins.service; then
-  sed -i '/Environment=/a Environment="CASC_JENKINS_CONFIG=/var/lib/jenkins/casc.yaml"' /usr/lib/systemd/system/jenkins.service
-fi
+mkdir -p /usr/lib/systemd/system/jenkins.service.d
+cat > /usr/lib/systemd/system/jenkins.service.d/overrides.conf <<EOF
+[Service]
+Environment="CASC_JENKINS_CONFIG=/var/lib/jenkins/casc.yaml"
+Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+EOF
 
 # Maybe change config.xml useSecurity to false???
 systemctl daemon-reload
