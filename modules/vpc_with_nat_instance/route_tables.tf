@@ -17,7 +17,7 @@ resource "aws_route_table" "private_subnet_route_table" {
 
   route {
     cidr_block           = "0.0.0.0/0"
-    network_interface_id = aws_network_interface.eni_nat.id
+    network_interface_id = aws_instance.ec2_nat.primary_network_interface_id
   }
 
   route {
