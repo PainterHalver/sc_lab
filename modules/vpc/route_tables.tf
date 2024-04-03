@@ -21,6 +21,13 @@ resource "aws_route_table" "private_subnet_route_table" {
   }
 }
 
+resource "aws_route" "private_to_nat_route" {
+  count = var.with_nat_instance.enabled ? 1 : 0
+  route_table_id = aws_route_table.private_subnet_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  network_interface_id = aws_instance.ec2_nat[0].primary_network_interface_id
+}
+
 // Attach to subnets
 resource "aws_route_table_association" "public_subnet_association" {
   subnet_id      = aws_subnet.public_subnet.id
