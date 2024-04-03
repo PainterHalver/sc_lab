@@ -29,7 +29,7 @@ wget -O /opt/jenkins-cli.jar http://localhost:8080/jnlpJars/jenkins-cli.jar
 
 # Run install-plugin command, retry up to 10 times
 for i in {1..10}; do
-  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest configuration-as-code:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest job-dsl:latest startup-trigger-plugin:latest && break
+  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest && break
   sleep 5
 done
 
@@ -43,10 +43,35 @@ jenkins:
       users:
         - id: "admin"
           name: "admin"
-          password: "jenkins-admin"
+          password: "admin123"
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
+jobs:
+  - script: >
+      job('bootstrap') {
+        description('Bootstrap job created with Jenkins Configuration as Code + Job DSL')
+        triggers {
+          hudsonStartupTrigger {
+            quietPeriod("20")
+            runOnChoice("ON_CONNECT")
+            label("")
+            nodeParameterName("")
+          }
+        }
+        steps {
+          dsl {
+            text("""
+              job('Hello World') {
+                description('Hello World job created with Job DSL')
+                steps {
+                  shell('echo Hello, World! FROM JOB DSL')
+                }
+              }
+            """)
+          }
+        }
+      }
 EOF
 
 # Restart Jenkins

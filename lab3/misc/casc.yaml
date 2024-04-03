@@ -6,7 +6,7 @@ jenkins:
       users:
         - id: "admin"
           name: "admin"
-          password: "jenkins-admin"
+          password: "admin123"
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
@@ -16,23 +16,18 @@ jobs:
         description('Bootstrap job created with Jenkins Configuration as Code + Job DSL')
         triggers {
           hudsonStartupTrigger {
-            quietPeriod("60")
+            quietPeriod("20")
             runOnChoice("ON_CONNECT")
             label("")
             nodeParameterName("")
           }
         }
+        scm {
+          git('https://github.com/painterhalver/sc_lab.git', 'lab3')
+        }
         steps {
           dsl {
-            text("""
-              job('Hello World') {
-                description('Hello World job created with Job DSL')
-                steps {
-                  shell('echo Hello, World! FROM JOB DSL')
-                }
-              }
-            """)
+            external('sc_lab/lab3/jenkins_job_dsl/HelloWorld.dsl')
           }
         }
       }
-  
