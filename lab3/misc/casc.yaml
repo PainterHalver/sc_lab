@@ -1,0 +1,38 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          name: "admin"
+          password: "jenkins-admin"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+jobs:
+  - script: >
+      job('bootstrap') {
+        description('Bootstrap job created with Jenkins Configuration as Code + Job DSL')
+        triggers {
+          hudsonStartupTrigger {
+            quietPeriod("60")
+            runOnChoice("ON_CONNECT")
+            label("")
+            nodeParameterName("")
+          }
+        }
+        steps {
+          dsl {
+            text("""
+              job('Hello World') {
+                description('Hello World job created with Job DSL')
+                steps {
+                  shell('echo Hello, World! FROM JOB DSL')
+                }
+              }
+            """)
+          }
+        }
+      }
+  
