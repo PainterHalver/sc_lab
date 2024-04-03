@@ -68,6 +68,12 @@ jobs:
             remote {
               url('https://github.com/painterhalver/sc_lab.git')
             }
+            extension {
+              cloneOptions {
+                depth(1)
+                shallow(true)
+              }
+            }
           }
         }
         steps {
