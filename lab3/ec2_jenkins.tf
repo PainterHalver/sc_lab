@@ -13,7 +13,7 @@ resource "aws_instance" "ec2_jenkins" {
     device_index         = 0
   }
 
-  user_data = templatefile("${path.module}/user-data/jenkins.sh.tftpl", {
+  user_data = templatefile("${path.module}/user-data/jenkins.sh", {
 
   })
 

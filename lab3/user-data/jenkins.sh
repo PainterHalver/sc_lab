@@ -3,7 +3,7 @@
 set -exo pipefail
 
 # Install dependencies
-yum install -y wget
+sudo yum install -y wget
 
 # Install Jenkins
 wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
