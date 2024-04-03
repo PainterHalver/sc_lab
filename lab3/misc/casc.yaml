@@ -10,6 +10,9 @@ jenkins:
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
 jobs:
   - script: >
       job('bootstrap') {
@@ -23,11 +26,16 @@ jobs:
           }
         }
         scm {
-          git('https://github.com/painterhalver/sc_lab.git', 'lab3')
+          git {
+            branch('lab3')
+            remote {
+              url('https://github.com/painterhalver/sc_lab.git')
+            }
+          }
         }
         steps {
           dsl {
-            external('sc_lab/lab3/jenkins_job_dsl/HelloWorld.dsl')
+            external('lab3/jenkins_job_dsl/HelloWorld.dsl')
           }
         }
       }
