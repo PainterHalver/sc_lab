@@ -8,7 +8,9 @@ yum install -y wget git nfs-utils unzip
 # Download packer
 wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
 unzip packer_1.10.2_linux_amd64.zip
-mv packer /usr/local/bin/packer
+which -a packer | xargs rm -rf
+mv packer /usr/bin/packer
+hash -r
 rm packer_1.10.2_linux_amd64.zip
 
 # Mount NFS sharecd
