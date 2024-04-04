@@ -44,8 +44,8 @@ jobs:
         }
         steps {
           dsl {
-            external('lab3/jenkins_job_dsl/HelloWorld.dsl')
-            external('lab3/jenkins_job_dsl/BuildJenkinsAMI.dsl')
+            external('lab3/jenkins_jobs/HelloWorld.dsl')
+            external('lab3/jenkins_jobs/BuildJenkinsAMI.dsl')
           }
         }
         publishers {
