@@ -9,9 +9,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "nazii"
-    key    = "terraform/lab-2/terraform.tfstate"
-    region = "ap-northeast-2"
+    bucket         = "nazii"
+    key            = "terraform/lab-2/terraform.tfstate"
+    region         = "ap-northeast-2"
+    dynamodb_table = "hiepdao-terraform-lock"
   }
 }
 
