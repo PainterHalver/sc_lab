@@ -45,11 +45,11 @@ resource "aws_security_group" "ec2_proxy_sg" {
   }
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [module.vpc_with_nat_instance.vpc_cidr]
-    description = "Allow traffic from the VPC CIDR block"
+    from_port       = 3128
+    to_port         = 3128
+    protocol        = "-1"
+    security_groups = [aws_security_group.ec2_app_sg.id]
+    description     = "Allow proxy traffic from the application only"
   }
 
   egress {
