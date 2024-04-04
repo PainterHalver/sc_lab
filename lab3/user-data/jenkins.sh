@@ -3,7 +3,12 @@
 set -exo pipefail
 
 # Install dependencies
-sudo yum install -y wget
+yum install -y wget git nfs-utils
+
+# Mount NFS sharecd
+# mkdir -p /data
+# mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.0.89:/ /data
+# chmod go+rw /data
 
 # Install Jenkins
 wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
@@ -16,7 +21,7 @@ mkdir -p /usr/lib/systemd/system/jenkins.service.d
 cat > /usr/lib/systemd/system/jenkins.service.d/overrides.conf <<EOF
 [Service]
 Environment="CASC_JENKINS_CONFIG=/var/lib/jenkins/casc.yaml"
-Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Xmx512m"
 EOF
 
 # Maybe change config.xml useSecurity to false???
@@ -68,7 +73,7 @@ jobs:
             remote {
               url('https://github.com/painterhalver/sc_lab.git')
             }
-            extension {
+            extensions {
               cloneOptions {
                 depth(1)
                 shallow(true)
@@ -80,6 +85,9 @@ jobs:
           dsl {
             external('lab3/jenkins_job_dsl/HelloWorld.dsl')
           }
+        }
+        publishers {
+          wsCleanup()
         }
       }
 EOF

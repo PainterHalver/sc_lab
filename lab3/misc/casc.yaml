@@ -31,7 +31,7 @@ jobs:
             remote {
               url('https://github.com/painterhalver/sc_lab.git')
             }
-            extension {
+            extensions {
               cloneOptions {
                 depth(1)
                 shallow(true)
@@ -43,5 +43,8 @@ jobs:
           dsl {
             external('lab3/jenkins_job_dsl/HelloWorld.dsl')
           }
+        }
+        publishers {
+          wsCleanup()
         }
       }

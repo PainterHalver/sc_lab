@@ -28,6 +28,6 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo -E -S sh '{{ .Path }}'"
-    script          = "${path.root}/../user-data/jenkins.sh"
+    inline = [templatefile("${path.root}/../user-data/jenkins.sh", {  })]
   }
 }
