@@ -5,6 +5,12 @@ set -exo pipefail
 # Install dependencies
 yum install -y wget git nfs-utils
 
+# Download packer
+wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
+unzip packer_1.10.2_linux_amd64.zip
+mv packer /usr/local/bin/packer
+rm packer_1.10.2_linux_amd64.zip
+
 # Mount NFS sharecd
 # mkdir -p /data
 # mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.0.89:/ /data
@@ -34,7 +40,7 @@ wget -O /opt/jenkins-cli.jar http://localhost:8080/jnlpJars/jenkins-cli.jar
 
 # Run install-plugin command, retry up to 10 times
 for i in {1..10}; do
-  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest && break
+  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest ansicolor:latest && break
   sleep 5
 done
 
@@ -55,6 +61,9 @@ jenkins:
 security:
   globalJobDslSecurityConfiguration:
     useScriptSecurity: false
+unclassified:
+  ansiColorBuildWrapper:
+    globalColorMapName: "xterm"
 jobs:
   - script: >
       job('bootstrap') {
@@ -84,6 +93,7 @@ jobs:
         steps {
           dsl {
             external('lab3/jenkins_job_dsl/HelloWorld.dsl')
+            external('lab3/jenkins_job_dsl/BuildJenkinsAMI.dsl')
           }
         }
         publishers {

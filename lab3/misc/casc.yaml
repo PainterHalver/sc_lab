@@ -13,6 +13,9 @@ jenkins:
 security:
   globalJobDslSecurityConfiguration:
     useScriptSecurity: false
+unclassified:
+  ansiColorBuildWrapper:
+    globalColorMapName: "xterm"
 jobs:
   - script: >
       job('bootstrap') {
@@ -42,6 +45,7 @@ jobs:
         steps {
           dsl {
             external('lab3/jenkins_job_dsl/HelloWorld.dsl')
+            external('lab3/jenkins_job_dsl/BuildJenkinsAMI.dsl')
           }
         }
         publishers {
