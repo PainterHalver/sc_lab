@@ -11,3 +11,5 @@
 ---
 
 ### Lab 3
+
+![alt text](diagrams/lab-3.png)
