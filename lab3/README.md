@@ -13,7 +13,7 @@ Whenever a new base AMI is released (built), other AMI builds are triggered auto
 Flask API
 user-data: Auto mount EFS
 Run Docker Compose
-Use Boto3, pandas... to export non-compliance security groups (Webpage > Click a button > List URLs to download CSV files)
+Use Boto3, pandas(export CSV)... to export non-compliance security groups (Webpage > Click a button > List URLs to download CSV files)
 🟥Store CSV lists to DB
 App pipelines:
 
@@ -36,3 +36,7 @@ Rule to check SG rule compliance
 🟨RDS
 🟨S3 (CSV files)
 🟨Encrypted with KMS key
+
+### Notes
+
+- Terraform ECR Public gets `400` cannot delete if it has images, but can delete whole registry using console
