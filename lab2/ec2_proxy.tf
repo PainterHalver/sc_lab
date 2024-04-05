@@ -37,7 +37,7 @@ resource "aws_security_group" "ec2_proxy_sg" {
   ingress {
     from_port       = 3128
     to_port         = 3128
-    protocol        = "-1"
+    protocol        = "tcp"
     security_groups = [aws_security_group.ec2_app_sg.id]
     description     = "Allow proxy traffic from the application only"
   }
