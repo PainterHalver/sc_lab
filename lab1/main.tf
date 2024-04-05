@@ -5,6 +5,7 @@ module "vpc_app" {
   public_subnet_cidr  = "10.0.0.0/24"
   private_subnet_cidr = "10.0.1.0/24"
   subnet_az           = var.aws_availability_zone
+  default_tags        = var.default_tags
 }
 
 module "vpc_ldap" {
@@ -15,9 +16,10 @@ module "vpc_ldap" {
   private_subnet_cidr = "10.1.1.0/24"
   subnet_az           = var.aws_availability_zone
   with_nat_instance = {
-    enabled = true
+    enabled         = true
     ssh_pubkey_path = var.ssh_pubkey_path
   }
+  default_tags = var.default_tags
 }
 
 resource "aws_key_pair" "ssh_pubkey" {

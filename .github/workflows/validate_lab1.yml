@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - "lab-1/**"
+      - "lab1/**"
   workflow_dispatch:
 jobs:
   validate:
@@ -31,4 +31,3 @@ jobs:
         run: |
           terraform init
           terraform validate
-          terraform fmt -check

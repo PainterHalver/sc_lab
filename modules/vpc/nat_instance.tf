@@ -46,6 +46,8 @@ resource "aws_security_group" "sg_nat" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = var.default_tags
 }
 
 resource "aws_instance" "ec2_nat" {

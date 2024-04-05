@@ -9,6 +9,7 @@ module "vpc_with_nat_instance" {
     enabled         = true
     ssh_pubkey_path = var.ssh_pubkey_path
   }
+  default_tags = var.default_tags
 }
 
 
