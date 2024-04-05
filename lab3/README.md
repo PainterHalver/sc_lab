@@ -39,4 +39,5 @@ Rule to check SG rule compliance
 
 ### Notes
 
+- Jenkins seedjob flow: JCasC -> Seed Job -> External Job DSLs -> Job groovy scripts
 - Terraform ECR Public gets `400` cannot delete if it has images, but can delete whole registry using console
