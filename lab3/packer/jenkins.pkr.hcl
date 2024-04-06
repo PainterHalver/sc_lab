@@ -12,18 +12,18 @@ locals {
   region    = "ap-southeast-1"
 }
 
-source "amazon-ebs" "rhel9" {
+source "amazon-ebs" "centos_stream_9" {
   ami_name      = "jenkins-ami-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
-  source_ami    = "ami-09b1e8fc6368b8a3a"
+  source_ami    = "ami-07dc7fbc73bffbeb5" # CentOS Stream 9
   ssh_username  = "ec2-user"
 }
 
 build {
   name = "build-jenkins-ami"
   sources = [
-    "source.amazon-ebs.rhel9"
+    "source.amazon-ebs.centos_stream_9"
   ]
 
   provisioner "shell" {

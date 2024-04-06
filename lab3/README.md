@@ -41,3 +41,6 @@ Rule to check SG rule compliance
 
 - Jenkins seedjob flow: JCasC -> Seed Job -> External Job DSLs -> Job groovy scripts
 - Terraform ECR Public gets `400` cannot delete if it has images, but can delete whole registry using console
+- https://www.reddit.com/r/aws/comments/1ax2zv4/regional_data_transfer_usage_generated_by_ubuntu/
+- https://aws.amazon.com/vpc/faqs/#:~:text=two%20instances%20communicate%20using%20public%20IP
+- yum mirrors may deny access from some regions like `seoul`, best to use `sydney` or `singapore`

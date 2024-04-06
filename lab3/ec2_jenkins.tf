@@ -1,5 +1,5 @@
 resource "aws_instance" "ec2_jenkins" {
-  ami                  = data.aws_ami.rhel9.id
+  ami                  = data.aws_ami.centos_stream_9.id
   instance_type        = var.instance_type
   key_name             = aws_key_pair.ssh_pubkey.key_name
   iam_instance_profile = aws_iam_instance_profile.ec2_jenkins_instance_profile.name
