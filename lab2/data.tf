@@ -1,9 +1,9 @@
-data "aws_ami" "rhel9" {
+data "aws_ami" "centos_stream_9" {
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["679593333241"]
 
   filter {
-    name   = "image-id"
-    values = ["ami-09b1e8fc6368b8a3a"]
+    name   = "name"
+    values = ["CentOS-Stream-ec2-9-*"]
   }
 }

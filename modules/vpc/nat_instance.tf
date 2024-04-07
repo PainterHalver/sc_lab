@@ -1,17 +1,11 @@
-data "aws_ami" "amazon_linux" {
+data "aws_ami" "centos_stream_9" {
   count       = var.with_nat_instance.enabled ? 1 : 0
   most_recent = true
-  owners      = ["amazon"]
+  owners      = ["679593333241"]
 
-  // Get the free tier Amazon Linux AMI
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
+    values = ["CentOS-Stream-ec2-9-*"]
   }
 }
 
@@ -53,7 +47,7 @@ resource "aws_security_group" "sg_nat" {
 resource "aws_instance" "ec2_nat" {
   count             = var.with_nat_instance.enabled ? 1 : 0
   instance_type     = "t2.micro"
-  ami               = data.aws_ami.amazon_linux[0].id
+  ami               = data.aws_ami.centos_stream_9[0].id
   key_name          = aws_key_pair.ssh_pubkey_nat[0].key_name
   subnet_id         = aws_subnet.public_subnet.id
   security_groups   = [aws_security_group.sg_nat[0].id]
