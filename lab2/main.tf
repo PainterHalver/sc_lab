@@ -6,8 +6,9 @@ module "vpc_with_nat_instance" {
   private_subnet_cidr = "10.0.1.0/24"
   subnet_az           = var.aws_availability_zone
   with_nat_instance = {
-    enabled         = true
-    ssh_pubkey_path = var.ssh_pubkey_path
+    enabled                   = true
+    ssh_pubkey_path           = var.ssh_pubkey_path
+    export_cloudwatch_metrics = true
   }
   default_tags = var.default_tags
 }

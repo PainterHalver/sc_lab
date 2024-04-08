@@ -16,8 +16,9 @@ module "vpc_ldap" {
   private_subnet_cidr = "10.1.1.0/24"
   subnet_az           = var.aws_availability_zone
   with_nat_instance = {
-    enabled         = true
-    ssh_pubkey_path = var.ssh_pubkey_path
+    enabled                   = true
+    ssh_pubkey_path           = var.ssh_pubkey_path
+    export_cloudwatch_metrics = false
   }
   default_tags = var.default_tags
 }

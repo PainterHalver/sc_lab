@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -exo pipefail
 
 # Setup the Linux AMI to be a NAT instance
 # https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#create-nat-ami
@@ -16,5 +16,5 @@ sysctl -p /etc/sysctl.d/custom-ip-forwarding.conf
 /sbin/iptables -F FORWARD
 
 # Success log
-echo "OK!" > /root/user-data.log
+echo "OK!" >> /root/user-data.log
 

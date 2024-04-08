@@ -26,11 +26,13 @@ variable "default_tags" {
 
 variable "with_nat_instance" {
   type = object({
-    enabled = bool
-    ssh_pubkey_path = string
+    enabled                   = bool
+    ssh_pubkey_path           = string
+    export_cloudwatch_metrics = bool
   })
   default = {
-    enabled = false
-    ssh_pubkey_path = null
+    enabled                   = false
+    ssh_pubkey_path           = null
+    export_cloudwatch_metrics = false
   }
 }

@@ -1,3 +1,19 @@
+data "cloudinit_config" "nat_user_data" {
+  base64_encode = true
+
+  part {
+    filename     = "nat.sh"
+    content_type = "text/x-shellscript"
+    content      = file("${path.module}/user-data/nat.sh")
+  }
+
+  part {
+    filename     = "nat_metrics.sh"
+    content_type = "text/x-shellscript"
+    content      = var.with_nat_instance.export_cloudwatch_metrics ? file("${path.module}/user-data/nat_metrics.sh") : ""
+  }
+}
+
 data "aws_ami" "centos_stream_9" {
   count       = var.with_nat_instance.enabled ? 1 : 0
   most_recent = true
@@ -68,7 +84,7 @@ resource "aws_instance" "ec2_nat" {
   security_groups   = [aws_security_group.sg_nat[0].id]
   source_dest_check = false
 
-  user_data = file("${path.module}/user-data/nat.sh")
+  user_data = data.cloudinit_config.nat_user_data.rendered
 
   root_block_device {
     delete_on_termination = true
