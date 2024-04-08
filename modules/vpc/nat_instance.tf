@@ -15,6 +15,7 @@ resource "aws_key_pair" "ssh_pubkey_nat" {
   public_key = file(var.with_nat_instance.ssh_pubkey_path)
 }
 
+# https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#NATSG
 resource "aws_security_group" "sg_nat" {
   count  = var.with_nat_instance.enabled ? 1 : 0
   name   = "ec2-nat-sg"
@@ -24,20 +25,34 @@ resource "aws_security_group" "sg_nat" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Should be Public IP address range of your network
   }
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "all"
-    cidr_blocks = [var.vpc_cidr]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.private_subnet_cidr]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.private_subnet_cidr]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
