@@ -2,6 +2,25 @@
 
 set -exo pipefail
 
+# Wait for the proxy to be ready
+printf "Waiting for the proxy to be ready..."
+while ! echo > /dev/tcp/${proxy_ip}/3128; do
+  printf "."
+  sleep 1
+done
+echo "OK!"
+sleep 5
+
+# Config proxy environment variables
+cat <<EOF > /etc/profile.d/proxy.sh
+export http_proxy=http://${proxy_ip}:3128
+export https_proxy=http://${proxy_ip}:3128
+export HTTP_PROXY=http://${proxy_ip}:3128
+export HTTPS_PROXY=http://${proxy_ip}:3128
+EOF
+
+source /etc/profile.d/proxy.sh
+
 # Install required packages
 yum install -y python3 wget unzip
 
@@ -46,10 +65,10 @@ User=root
 StandardOutput=file:/var/log/quote.log
 StandardError=file:/var/log/quote.log
 Environment=PYTHONUNBUFFERED=1
-Environment=HTTP_PROXY=http://${proxy_address}
-Environment=HTTPS_PROXY=http://${proxy_address}
-Environment=http_proxy=http://${proxy_address}
-Environment=https_proxy=http://${proxy_address}
+Environment=HTTP_PROXY=http://${proxy_ip}:3128
+Environment=HTTPS_PROXY=http://${proxy_ip}:3128
+Environment=http_proxy=http://${proxy_ip}:3128
+Environment=https_proxy=http://${proxy_ip}:3128
 
 [Install]
 WantedBy=multi-user.target
