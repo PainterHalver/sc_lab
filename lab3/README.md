@@ -44,3 +44,4 @@ Rule to check SG rule compliance
 - https://www.reddit.com/r/aws/comments/1ax2zv4/regional_data_transfer_usage_generated_by_ubuntu/
 - https://aws.amazon.com/vpc/faqs/#:~:text=two%20instances%20communicate%20using%20public%20IP
 - yum mirrors may deny access from some regions like `seoul`, best to use `sydney` or `singapore`
+- AWS's AMI has package mananger source set to AWS's own mirror, which will cost REGIONAL DATA TRANSFER as opposed to using public mirrors, which is free inbound: https://www.reddit.com/r/aws/comments/17s1jsd/comment/ksui2rn/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
