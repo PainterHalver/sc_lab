@@ -14,6 +14,10 @@ output "nat_public_ip" {
   value = var.with_nat_instance.enabled ? aws_instance.ec2_nat[0].public_ip : null
 }
 
+output "nat_private_dns" {
+  value = var.with_nat_instance.enabled ? aws_instance.ec2_nat[0].private_dns : null
+}
+
 output "vpc_cidr" {
   value = var.vpc_cidr
 }

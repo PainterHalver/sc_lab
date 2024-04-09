@@ -17,6 +17,8 @@ export http_proxy=http://${proxy_ip}:3128
 export https_proxy=http://${proxy_ip}:3128
 export HTTP_PROXY=http://${proxy_ip}:3128
 export HTTPS_PROXY=http://${proxy_ip}:3128
+export no_proxy=localhost,127.0.0.1,169.254.169.254
+export NO_PROXY=localhost,127.0.0.1,169.254.169.254
 EOF
 
 source /etc/profile.d/proxy.sh
@@ -93,6 +95,12 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 {
   "metrics": {
     "metrics_collected": {
+      "cpu": {
+        "metrics_collection_interval": 10,
+        "measurement": [
+          "cpu_usage_idle"
+        ]
+      },
       "mem": {
         "metrics_collection_interval": 10,
         "measurement": [

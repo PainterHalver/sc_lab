@@ -19,6 +19,12 @@ cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 {
   "metrics": {
     "metrics_collected": {
+      "cpu": {
+        "metrics_collection_interval": 10,
+        "measurement": [
+          "cpu_usage_idle"
+        ]
+      },
       "mem": {
         "metrics_collection_interval": 10,
         "measurement": [
