@@ -32,7 +32,7 @@ resource "aws_security_group" "ec2_app_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [ module.vpc_with_nat_instance.sg_nat_id ]
   }
 
   egress {

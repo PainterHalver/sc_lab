@@ -28,10 +28,10 @@ resource "aws_security_group" "ec2_proxy_sg" {
   vpc_id = module.vpc_with_nat_instance.vpc_id
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [module.vpc_with_nat_instance.sg_nat_id]
   }
 
   ingress {
