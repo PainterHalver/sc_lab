@@ -1,5 +1,4 @@
 // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html
-
 resource "aws_iam_role" "ec2_cloudwatch_role" {
   name        = "CloudWatchAgentServerRole"
   description = "Role for EC2 CloudWatch agent"

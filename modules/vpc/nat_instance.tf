@@ -59,6 +59,13 @@ resource "aws_security_group" "sg_nat" {
   }
 
   egress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.private_subnet_cidr]
+  }
+
+  egress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -76,13 +83,14 @@ resource "aws_security_group" "sg_nat" {
 }
 
 resource "aws_instance" "ec2_nat" {
-  count             = var.with_nat_instance.enabled ? 1 : 0
-  instance_type     = "t2.micro"
-  ami               = data.aws_ami.centos_stream_9[0].id
-  key_name          = aws_key_pair.ssh_pubkey_nat[0].key_name
-  subnet_id         = aws_subnet.public_subnet.id
-  security_groups   = [aws_security_group.sg_nat[0].id]
-  source_dest_check = false
+  count                = var.with_nat_instance.enabled ? 1 : 0
+  instance_type        = "t2.micro"
+  ami                  = data.aws_ami.centos_stream_9[0].id
+  key_name             = aws_key_pair.ssh_pubkey_nat[0].key_name
+  subnet_id            = aws_subnet.public_subnet.id
+  security_groups      = [aws_security_group.sg_nat[0].id]
+  source_dest_check    = false
+  iam_instance_profile = var.with_nat_instance.instance_profile_name
 
   user_data = data.cloudinit_config.nat_user_data.rendered
 

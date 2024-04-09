@@ -19,6 +19,7 @@ module "vpc_ldap" {
     enabled                   = true
     ssh_pubkey_path           = var.ssh_pubkey_path
     export_cloudwatch_metrics = false
+    instance_profile_name     = null
   }
   default_tags = var.default_tags
 }

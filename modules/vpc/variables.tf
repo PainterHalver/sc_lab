@@ -29,10 +29,12 @@ variable "with_nat_instance" {
     enabled                   = bool
     ssh_pubkey_path           = string
     export_cloudwatch_metrics = bool
+    instance_profile_name     = string
   })
   default = {
     enabled                   = false
     ssh_pubkey_path           = null
     export_cloudwatch_metrics = false
+    instance_profile_name     = null
   }
 }

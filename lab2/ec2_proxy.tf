@@ -5,7 +5,7 @@ resource "aws_instance" "ec2_proxy" {
   subnet_id       = module.vpc_with_nat_instance.private_subnet_id
   security_groups = [aws_security_group.ec2_proxy_sg.id]
 
-  iam_instance_profile = aws_iam_instance_profile.ec2_cloudwatch_instance_profile.name
+  iam_instance_profile = module.ec2_cloudwatch_profile.profile_name
 
   root_block_device {
     delete_on_termination = true

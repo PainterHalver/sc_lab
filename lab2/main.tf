@@ -9,6 +9,7 @@ module "vpc_with_nat_instance" {
     enabled                   = true
     ssh_pubkey_path           = var.ssh_pubkey_path
     export_cloudwatch_metrics = true
+    instance_profile_name     = module.ec2_cloudwatch_profile.profile_name
   }
   default_tags = var.default_tags
 }

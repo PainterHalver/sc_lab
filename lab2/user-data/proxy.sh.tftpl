@@ -22,6 +22,27 @@ rm -rf amazon-cloudwatch-agent.rpm
 # Create the CloudWatch agent configuration file
 cat <<EOF > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 {
+  "metrics": {
+    "metrics_collected": {
+      "mem": {
+        "metrics_collection_interval": 10,
+        "measurement": [
+          "mem_used_percent"
+        ]
+      },
+      "disk": {
+        "resources": [
+          "/",
+          "/boot"
+        ],
+        "measurement": [
+          "total",
+          "used_percent"
+        ],
+        "metrics_collection_interval": 10
+      }
+    }
+  },
   "logs": {
     "logs_collected": {
       "files": {
