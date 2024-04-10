@@ -96,10 +96,23 @@ module "ec2_jenkins_profle" {
         "ec2:RunInstances",
         "ec2:StopInstances",
         "ec2:TerminateInstances",
-        "ssm:GetParameter"
+        "ssm:GetParameter",
       ]
       effect   = "Allow"
       resource = "*"
     },
+    {
+      name = "ECRPushPolicy"
+      action = [
+        "ecr:CompleteLayerUpload",
+        "ecr:GetAuthorizationToken",
+        "ecr:UploadLayerPart",
+        "ecr:InitiateLayerUpload",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:PutImage"
+      ]
+      effect   = "Allow"
+      resource = "*"
+    }
   ]
 }

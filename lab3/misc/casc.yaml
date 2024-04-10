@@ -46,6 +46,7 @@ jobs:
           dsl {
             external('lab3/jenkins_jobs/HelloWorld.dsl')
             external('lab3/jenkins_jobs/BuildJenkinsAMI.dsl')
+            external('lab3/jenkins_jobs/PythonAppCI.dsl')
           }
         }
         publishers {
