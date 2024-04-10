@@ -45,3 +45,34 @@ Rule to check SG rule compliance
 - https://aws.amazon.com/vpc/faqs/#:~:text=two%20instances%20communicate%20using%20public%20IP
 - yum mirrors may deny access from some regions like `seoul`, best to use `sydney` or `singapore`
 - AWS's AMI has package mananger source set to AWS's own mirror, which will cost REGIONAL DATA TRANSFER as opposed to using public mirrors, which is free inbound: https://www.reddit.com/r/aws/comments/17s1jsd/comment/ksui2rn/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+
+#### Mock Latest AMI Route
+- Use an S3 static website
+
+#### Lambda AMI Check
+- EventBridge rule triggers Lambda function at some interval
+- Lambda check for compare the lasest AMI-ID with the current one (stored on SSM Parameter Store)
+- If new AMI-ID is found, trigger Jenkins job to build new AMI and update the SSM Parameter Store
+
+#### EFS + DockerCompose?
+- UserData Script to clone github repo and run docker compose -> Pull and run image from ECR
+- Docker compose mount EFS volume to store data/logs??? =>Not as good as CloudWatch Logs
+```yaml
+# Example
+version: '3'
+services:
+  web:
+    image: my-web-app:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@my-rds-endpoint:5432/mydatabase
+    volumes:
+      - efs:/var/www/html
+
+volumes:
+  efs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=my-efs-endpoint,nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
+      device: :/
+```
