@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'lab3', url: 'https://github.com/PainterHalver/sc_lab3_app.git'
+                git branch: 'master', url: 'https://github.com/PainterHalver/sc_lab3_app.git'
                 script {
                     GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                 }

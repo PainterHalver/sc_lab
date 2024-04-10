@@ -103,7 +103,9 @@ jobs:
               cloneOptions {
                 depth(1)
                 shallow(true)
+                noTags(true)
               }
+              wipeWorkspace()
             }
           }
         }
