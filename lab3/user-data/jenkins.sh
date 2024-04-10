@@ -3,7 +3,7 @@
 set -exo pipefail
 
 # Install dependencies
-yum install -y wget git nfs-utils unzip
+yum install -y wget git nfs-utils unzip yum-utils
 
 # Download packer
 wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
@@ -18,6 +18,13 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 ./aws/install
 rm -rf awscliv2.zip aws
+
+# Install docker
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+
+# Allow Jenkins to run docker commands
+usermod -aG docker jenkins
 
 # Mount NFS sharecd
 # mkdir -p /data

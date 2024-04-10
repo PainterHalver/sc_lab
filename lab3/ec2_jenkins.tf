@@ -1,6 +1,6 @@
 resource "aws_instance" "ec2_jenkins" {
   ami                  = data.aws_ami.centos_stream_9.id
-  instance_type        = "t2.micro"
+  instance_type        = "t3.small"
   key_name             = aws_key_pair.ssh_pubkey.key_name
   iam_instance_profile = module.ec2_jenkins_profle.profile_name
   subnet_id            = module.vpc.public_subnet_id
