@@ -43,8 +43,6 @@ cat > /usr/lib/systemd/system/jenkins.service.d/overrides.conf <<EOF
 [Service]
 Environment="CASC_JENKINS_CONFIG=/var/lib/jenkins/casc.yaml"
 Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Xmx512m"
-MemoryHigh=512M
-MemoryMax=650M
 EOF
 
 # Maybe change config.xml useSecurity to false???

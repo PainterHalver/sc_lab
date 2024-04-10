@@ -104,12 +104,13 @@ module "ec2_jenkins_profle" {
     {
       name = "ECRPushPolicy"
       action = [
-        "ecr:CompleteLayerUpload",
-        "ecr:GetAuthorizationToken",
-        "ecr:UploadLayerPart",
-        "ecr:InitiateLayerUpload",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:PutImage"
+        "ecr-public:CompleteLayerUpload",
+        "ecr-public:GetAuthorizationToken",
+        "ecr-public:UploadLayerPart",
+        "ecr-public:InitiateLayerUpload",
+        "ecr-public:BatchCheckLayerAvailability",
+        "ecr-public:PutImage",
+        "sts:GetServiceBearerToken"
       ]
       effect   = "Allow"
       resource = "*"

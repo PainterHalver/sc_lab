@@ -2,15 +2,12 @@
 
 pipeline {
     agent any
-    environment {
-        GIT_COMMIT = ''
-    }
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'https://github.com/PainterHalver/sc_lab3_app.git'
                 script {
-                    GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                 }
             }
         }
@@ -18,7 +15,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    $(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/j7u4k4y6)
+                    echo $(aws ecr-public get-login-password --region us-east-1) | docker login --username AWS --password-stdin public.ecr.aws/j7u4k4y6
                     '''
                 }
             }
@@ -48,6 +45,11 @@ pipeline {
     post {
         always {
             cleanWs()
+            script {
+                sh '''
+                docker rmi -f $(docker images 'public.ecr.aws/j7u4k4y6/app' -q)
+                '''
+            }
         }
     }
 }
