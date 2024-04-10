@@ -1,5 +1,6 @@
 import boto3
 from urllib import request
+import os
 
 ssm_client = boto3.client('ssm')
 ec2_client = boto3.client('ec2')
@@ -31,7 +32,9 @@ def lambda_handler(event, context):
     # )
 
     # Trigger the Jenkins pipeline build, with the new base AMI ID as a parameter
-    request.urlopen(f'http://13.215.140.17:8080/buildByToken/buildWithParameters?job=HelloWorld&token=token123={latest_base_ami_id}')
+    JENKINS_URL = os.environ['JENKINS_URL']
+    JENKINS_JOB_AUTH_TOKEN = ssm_client.get_parameter(Name='/jenkins/auth_token')['Parameter']['Value']
+    request.urlopen(f'{JENKINS_URL}/buildByToken/buildWithParameters?job=HelloWorld&token={JENKINS_JOB_AUTH_TOKEN}&AMI_ID={latest_base_ami_id}')
 
     return {
         'statusCode': 200,

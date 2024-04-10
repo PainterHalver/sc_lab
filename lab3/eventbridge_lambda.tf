@@ -24,6 +24,11 @@ resource "aws_lambda_function" "lambda_check_ami" {
   architectures = ["x86_64"]
   role          = aws_iam_role.iam_for_lambda.arn
   runtime       = "python3.12"
+  environment {
+    variables = {
+      JENKINS_URL = "http://${aws_instance.ec2_jenkins.public_ip}:8080"
+    }
+  }
 
   filename = "lambda.zip"
   handler  = "lambda.lambda_handler"
