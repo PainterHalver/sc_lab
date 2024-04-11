@@ -5,7 +5,7 @@ pipelineJob('build-jenkins-ami') {
     description('Automatically build a jenkins AMI from BASE AMI')
     definition {
         cps {
-            script(readFileFromWorkspace('lab3/jenkins_jobs/BuildJenkinsAMI.groovy'))
+            script(readFileFromWorkspace('lab3/jenkins_jobs/BuildJenkinsAMI.pipeline.groovy'))
             sandbox()
         }
     }

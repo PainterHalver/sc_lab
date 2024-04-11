@@ -15,7 +15,7 @@ pipelineJob('python-app-ci') {
     }
     definition {
         cps {
-            script(readFileFromWorkspace('lab3/jenkins_jobs/PythonAppCI.groovy'))
+            script(readFileFromWorkspace('lab3/jenkins_jobs/PythonAppCI.pipeline.groovy'))
             sandbox()
         }
     }
