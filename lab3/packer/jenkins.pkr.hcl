@@ -16,8 +16,16 @@ source "amazon-ebs" "centos_stream_9" {
   ami_name      = "jenkins-ami-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
-  source_ami    = "ami-07dc7fbc73bffbeb5" # CentOS Stream 9
   ssh_username  = "ec2-user"
+
+  # CentOS Stream 9: ami-07dc7fbc73bffbeb5
+  source_ami_filter {
+    filters = {
+      name   = "CentOS-9-BaseAMI-*,CentOS-Stream-ec2-9-*"
+    }
+    most_recent = true
+    owners      = ["679593333241", "self"]
+  }
 }
 
 build {

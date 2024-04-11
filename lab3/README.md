@@ -84,3 +84,7 @@ volumes:
 
 #### Patch ASG
 - Update Launch_template with the new AMI??
+
+#### Build BaseAMI:
+- Build from local machine
+- Packer: Build AMI from centos9, publish AMI and change S3 /images/aws/centos/latest to the new AMI-ID

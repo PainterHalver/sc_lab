@@ -13,11 +13,13 @@ mv packer /usr/bin/packer
 hash -r
 rm packer_1.10.2_linux_amd64.zip
 
-# Install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-./aws/install
-rm -rf awscliv2.zip aws
+# Install AWS CLI if not already installed:
+if ! command -v aws && [ ! -f /usr/local/bin/aws ]; then
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  unzip awscliv2.zip
+  ./aws/install
+  rm -rf awscliv2.zip aws
+fi
 
 # Install docker
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
