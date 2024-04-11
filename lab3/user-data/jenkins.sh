@@ -25,9 +25,6 @@ fi
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install -y docker-ce docker-ce-cli containerd.io
 
-# Allow Jenkins to run docker commands
-usermod -aG docker jenkins
-
 # Mount NFS sharecd
 # mkdir -p /data
 # mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 10.0.0.89:/ /data
@@ -38,6 +35,9 @@ wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenki
 rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
 yum install -y fontconfig java-17-openjdk
 yum install -y jenkins
+
+# Allow Jenkins to run docker commands
+usermod -aG docker jenkins
 
 # Disable Jenkins post-installation setup wizard add JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 mkdir -p /usr/lib/systemd/system/jenkins.service.d

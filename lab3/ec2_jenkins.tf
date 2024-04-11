@@ -3,7 +3,7 @@ resource "aws_instance" "ec2_jenkins" {
   instance_type        = "t3.small"
   key_name             = aws_key_pair.ssh_pubkey.key_name
   iam_instance_profile = module.ec2_jenkins_profle.profile_name
-  subnet_id            = module.vpc.public_subnet_id
+  subnet_id            = aws_default_subnet.default_az1.id
   security_groups      = [aws_security_group.jenkins_sg.id]
 
   root_block_device {
@@ -22,7 +22,7 @@ resource "aws_instance" "ec2_jenkins" {
 
 resource "aws_security_group" "jenkins_sg" {
   name   = "jenkins-sg"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = aws_default_subnet.default_az1.vpc_id
 
   ingress {
     from_port   = 22

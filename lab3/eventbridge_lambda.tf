@@ -32,6 +32,10 @@
 
 #   filename = "lambda.zip"
 #   handler  = "lambda.lambda_handler"
+
+#   provisioner "local-exec" {
+#     command = "rm -f lambda.zip"
+#   }
 # }
 
 # data "archive_file" "lambda" {
