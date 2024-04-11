@@ -55,12 +55,21 @@ wget -O /opt/jenkins-cli.jar http://localhost:8080/jnlpJars/jenkins-cli.jar
 
 # Run install-plugin command, retry up to 10 times
 for i in {1..10}; do
-  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest ansicolor:latest build-token-root:latest && break
+  java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest ansicolor:latest build-token-root:latest sonar:latest && break
   sleep 5
 done
 
 # Create Jenkins configuration as code file
 cat >> /var/lib/jenkins/casc.yaml <<EOF
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "sonarqube_token"
+              secret: "1144a76b7bb87021f2054c47396e4eb0b349c7fa"
+              description: "SonarQube Token"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
   securityRealm:
@@ -79,6 +88,27 @@ security:
 unclassified:
   ansiColorBuildWrapper:
     globalColorMapName: "xterm"
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube_token"
+      name: "SonarCloud Server"
+      serverUrl: "https://sonarcloud.io"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
+tool:
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  sonarRunnerInstallation:
+    installations:
+    - name: "sonar-scanner"
+      properties:
+      - installSource:
+          installers:
+          - sonarRunnerInstaller:
+              id: "5.0.1.3006"
 jobs:
   - script: >
       job('bootstrap') {
