@@ -43,7 +43,7 @@ Rule to check SG rule compliance
 - Terraform ECR Public gets `400` cannot delete if it has images, but can delete whole registry using console
 - https://www.reddit.com/r/aws/comments/1ax2zv4/regional_data_transfer_usage_generated_by_ubuntu/
 - https://aws.amazon.com/vpc/faqs/#:~:text=two%20instances%20communicate%20using%20public%20IP
-- yum mirrors may deny access from some regions like `seoul`, best to use `sydney` or `singapore`
+- yum mirrors may deny access from some IPs/regions like `seoul`, best to use `sydney` or `singapore`
 - AWS's AMI has package mananger source set to AWS's own mirror, which will cost REGIONAL DATA TRANSFER as opposed to using public mirrors, which is free inbound: https://www.reddit.com/r/aws/comments/17s1jsd/comment/ksui2rn/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 
 #### Mock Latest AMI Route
@@ -76,3 +76,11 @@ volumes:
       o: addr=my-efs-endpoint,nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
       device: :/
 ```
+
+#### Terraform
+- 2 projects ????
+  - Jenkins with Lambda, Eventbridge
+  - App: ASG, ALB, RDS, Config, EFS, S3, CloudWatch
+
+#### Patch ASG
+- Update Launch_template with the new AMI??
