@@ -10,13 +10,13 @@ module "ec2_cloudwatch_profile" {
 
   inline_policies = [
     {
-      name     = "CloudWatchAgentPutLogsRetention"
+      name     = "CloudWatchAgentPutLogsRetentionInlinePolicy"
       action   = ["logs:PutRetentionPolicy"]
       effect   = "Allow"
       resource = "arn:aws:logs:*:*:log-group:LAB-2:*"
     },
     {
-      name     = "AppDownAlertSNSRole"
+      name     = "AppDownAlertSNSInlinePolicy"
       action   = ["sns:Publish"]
       effect   = "Allow"
       resource = aws_sns_topic.ec2_app_stop_alert.arn
