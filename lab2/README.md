@@ -8,3 +8,4 @@
 - https://access.redhat.com/solutions/7001170
 - Restrict NAT instance SG: Only 80,443 from private subnet to internet, [docs](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#NATSG)
 - Config `NO_PROXY` to include `169.254.169.254` for IMDS access
+- `traceroute` on linux uses UDP, `ping` uses ICMP => Config SG

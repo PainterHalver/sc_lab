@@ -58,6 +58,22 @@ resource "aws_security_group" "sg_nat" {
     cidr_blocks = [var.private_subnet_cidr]
   }
 
+  // Alow ICMP from the private subnet, for `ping`
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = [var.private_subnet_cidr]
+  }
+
+  // UDP For traceroute
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "udp"
+    cidr_blocks = [var.private_subnet_cidr]
+  }
+
   egress {
     from_port   = 22
     to_port     = 22
@@ -76,6 +92,22 @@ resource "aws_security_group" "sg_nat" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // ICMP for ping
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  // UDP for traceroute
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
