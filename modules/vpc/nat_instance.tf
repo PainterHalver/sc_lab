@@ -60,8 +60,8 @@ resource "aws_security_group" "sg_nat" {
 
   // Alow ICMP from the private subnet, for `ping`
   ingress {
-    from_port   = 0
-    to_port     = 0
+    from_port   = -1
+    to_port     = -1
     protocol    = "icmp"
     cidr_blocks = [var.private_subnet_cidr]
   }
@@ -69,7 +69,7 @@ resource "aws_security_group" "sg_nat" {
   // UDP For traceroute
   ingress {
     from_port   = 0
-    to_port     = 0
+    to_port     = 65535
     protocol    = "udp"
     cidr_blocks = [var.private_subnet_cidr]
   }
@@ -97,8 +97,8 @@ resource "aws_security_group" "sg_nat" {
 
   // ICMP for ping
   egress {
-    from_port   = 0
-    to_port     = 0
+    from_port   = -1
+    to_port     = -1
     protocol    = "icmp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -106,7 +106,7 @@ resource "aws_security_group" "sg_nat" {
   // UDP for traceroute
   egress {
     from_port   = 0
-    to_port     = 0
+    to_port     = 65535
     protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
   }
