@@ -65,6 +65,26 @@
 
 #   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"]
 
+#   // Inline policy to allow S3 access, needed by Delivery Channel
+#   inline_policy {
+#     name = "AllowS3Access"
+#     policy = jsonencode({
+#       Version = "2012-10-17",
+#       Statement = [
+#         {
+#           Action = [
+#             "s3:*"
+#           ],
+#           Effect = "Allow",
+#           Resource = [
+#             aws_s3_bucket.config_bucket.arn,
+#             "${aws_s3_bucket.config_bucket.arn}/*"
+#           ]
+#         }
+#       ]
+#     })
+#   }
+
 #   tags = var.default_tags
 # }
 
