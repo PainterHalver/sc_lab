@@ -63,6 +63,7 @@
 #     ]
 #   })
 
+#   // https://docs.aws.amazon.com/config/latest/developerguide/security-iam-awsmanpol.html#security-iam-awsmanpol-AWS_ConfigRole
 #   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"]
 
 #   // Inline policy to allow S3 access, needed by Delivery Channel
