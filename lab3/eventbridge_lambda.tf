@@ -18,6 +18,13 @@
 # #   source_arn    = aws_cloudwatch_event_rule.every_1_day.arn
 # # }
 
+# # PARAMETER STORE for current hip ami
+# resource "aws_ssm_parameter" "current_hip_ami_id" {
+#   name  = "current-hip-ami-id"
+#   type  = "String"
+#   value = "ami-12345"
+# }
+
 # resource "aws_lambda_function" "lambda_check_ami" {
 #   function_name = "function_check_ami_and_trigger_pipeline"
 #   description   = "Check AMI and trigger pipeline"
