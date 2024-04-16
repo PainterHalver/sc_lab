@@ -23,18 +23,18 @@ def lambda_handler(event, context):
             'body': 'No new base AMI found.'
         }
 
-    # Set the new base AMI ID in parameter store
-    # response = ssm_client.put_parameter(
-    #     Name='current-hip-ami-id',
-    #     Value=latest_hip_ami_id,
-    #     Type='String',
-    #     Overwrite=True
-    # )
-
     # Trigger the Jenkins pipeline build, with the new base AMI ID as a parameter
-    JENKINS_URL = os.environ['JENKINS_URL']
+    JENKINS_URL = os.environ.get('JENKINS_URL')
     JENKINS_JOB_AUTH_TOKEN = ssm_client.get_parameter(Name='/jenkins/auth_token')['Parameter']['Value']
-    request.urlopen(f'{JENKINS_URL}/buildByToken/buildWithParameters?job=HelloWorld&token={JENKINS_JOB_AUTH_TOKEN}&AMI_ID={latest_hip_ami_id}')
+    request.urlopen(f'{JENKINS_URL}/buildByToken/buildWithParameters?job=BuildBaseAMI&token={JENKINS_JOB_AUTH_TOKEN}&HIP_AMI_ID={latest_hip_ami_id}')
+
+    # Set the new base AMI ID in parameter store
+    response = ssm_client.put_parameter(
+        Name='current-hip-ami-id',
+        Value=latest_hip_ami_id,
+        Type='String',
+        Overwrite=True
+    )
 
     return {
         'statusCode': 200,

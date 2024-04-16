@@ -11,9 +11,7 @@ resource "aws_instance" "ec2_jenkins" {
     volume_size           = 10
   }
 
-  user_data = templatefile("${path.module}/user-data/jenkins.sh", {
-
-  })
+  user_data = templatefile("${path.module}/user-data/jenkins_master.sh", {})
 
   tags = merge(var.default_tags, {
     Name = "ec2-jenkins"

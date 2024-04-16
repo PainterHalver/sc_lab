@@ -1,3 +1,9 @@
+#!/bin/bash
+
+set -exo pipefail
+
+# Create Jenkins configuration as code file
+cat >> /var/lib/jenkins/casc.yaml <<EOF
 credentials:
   system:
     domainCredentials:
@@ -85,3 +91,7 @@ jobs:
           wsCleanup()
         }
       }
+EOF
+
+# Restart Jenkins
+systemctl restart jenkins

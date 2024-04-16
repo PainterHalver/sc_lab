@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket         = "nazii"
-    key            = "terraform/lab-3/terraform.tfstate"
+    key            = "terraform/lab-3-jenkins/terraform.tfstate"
     region         = "ap-northeast-2"
     dynamodb_table = "hiepdao-terraform-lock"
   }
