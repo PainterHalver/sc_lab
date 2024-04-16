@@ -12,14 +12,14 @@ pipeline {
             steps {
                 dir('lab3/packer') {
                     sh 'packer init .'
-                    sh 'packer validate jenkins.pkr.hcl'
+                    sh 'packer validate base_ami.pkr.hcl'
                 }
             }
         }
         stage('Build with Packer') {
             steps {
                 dir('lab3/packer') {
-                    sh 'packer build jenkins.pkr.hcl'
+                    sh 'packer build base_ami.pkr.hcl'
                 }
             }
         }
