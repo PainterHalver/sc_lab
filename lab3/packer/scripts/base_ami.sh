@@ -3,6 +3,7 @@
 set -exo pipefail
 
 # Install common dependencies
+yum clean all
 yum install -y nano git unzip wget
 
 # Install aws-cli

@@ -17,7 +17,7 @@ locals {
 }
 
 source "amazon-ebs" "centos_stream_9" {
-  ami_name      = "CentOS-9-Jenkins-${local.timestamp}"
+  ami_name      = "CentOS-9-Base-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
   ssh_username  = "ec2-user"
@@ -25,7 +25,7 @@ source "amazon-ebs" "centos_stream_9" {
 }
 
 build {
-  name = "build-jenkins-ami"
+  name = "build-base-ami"
   sources = [
     "source.amazon-ebs.centos_stream_9"
   ]

@@ -13,7 +13,7 @@ locals {
 }
 
 source "amazon-ebs" "centos_stream_9" {
-  ami_name      = "CentOS-9-BaseAMI-${local.timestamp}"
+  ami_name      = "CentOS-9-HIP-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
   source_ami    = "ami-07dc7fbc73bffbeb5" # CentOS Stream 9
@@ -21,7 +21,7 @@ source "amazon-ebs" "centos_stream_9" {
 }
 
 build {
-  name = "build-jenkins-ami"
+  name = "build-hip-ami"
   sources = [
     "source.amazon-ebs.centos_stream_9"
   ]
