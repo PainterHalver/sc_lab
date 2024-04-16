@@ -11,15 +11,15 @@ pipeline {
         stage('Initialize Packer and validate') {
             steps {
                 dir('lab3/packer') {
-                    sh 'packer init .'
-                    sh 'packer validate base_ami.pkr.hcl'
+                    sh 'packer init base_ami.pkr.hcl'
+                    sh "packer validate -var 'hip_ami_id=${HIP_AMI_ID}' base_ami.pkr.hcl"
                 }
             }
         }
         stage('Build with Packer') {
             steps {
                 dir('lab3/packer') {
-                    sh 'packer build base_ami.pkr.hcl'
+                    sh "packer build -var 'hip_ami_id=${HIP_AMI_ID}' base_ami.pkr.hcl"
                 }
             }
         }

@@ -7,6 +7,10 @@ packer {
   }
 }
 
+variable "hip_ami_id" {
+  type    = string
+}
+
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
   region    = "ap-southeast-1"
@@ -17,14 +21,7 @@ source "amazon-ebs" "centos_stream_9" {
   instance_type = "t2.micro"
   region        = local.region
   ssh_username  = "ec2-user"
-
-  source_ami_filter {
-    filters = {
-      name   = "CentOS-9-HIP-*"
-    }
-    most_recent = true
-    owners      = ["self"]
-  }
+  source_ami    = var.hip_ami_id
 }
 
 build {
