@@ -15,6 +15,7 @@ rm -rf awscliv2.zip aws
 # Install docker
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker
 
 # Install amazon-cloudwatch-agent
 wget https://amazoncloudwatch-agent.s3.amazonaws.com/redhat/amd64/latest/amazon-cloudwatch-agent.rpm

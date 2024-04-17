@@ -42,37 +42,37 @@ pipeline {
                 }
             }
         }
-        // stage('Docker Login') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //             echo $(aws ecr-public get-login-password --region us-east-1) | \
-        //                 docker login --username AWS --password-stdin public.ecr.aws/j7u4k4y6
-        //             '''
-        //         }
-        //     }
-        // }
-        // stage('Build Docker Image') {
-        //     steps {
-        //         script {
-        //             sh '''
-        //             docker build -t app .
-        //             '''
-        //         }
-        //     }
-        // }
-        // stage('Tag and Push Docker Image') {
-        //     steps {
-        //         script {
-        //             sh """
-        //             docker tag app:latest public.ecr.aws/j7u4k4y6/app:latest
-        //             docker push public.ecr.aws/j7u4k4y6/app:latest
-        //             docker tag app:latest public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
-        //             docker push public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Docker Login') {
+            steps {
+                script {
+                    sh '''
+                    echo $(aws ecr-public get-login-password --region us-east-1) | \
+                        docker login --username AWS --password-stdin public.ecr.aws/j7u4k4y6
+                    '''
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    docker build -t app .
+                    '''
+                }
+            }
+        }
+        stage('Tag and Push Docker Image') {
+            steps {
+                script {
+                    sh """
+                    docker tag app:latest public.ecr.aws/j7u4k4y6/app:latest
+                    docker push public.ecr.aws/j7u4k4y6/app:latest
+                    docker tag app:latest public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
+                    docker push public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
+                    """
+                }
+            }
+        }
     }
     post {
         always {
