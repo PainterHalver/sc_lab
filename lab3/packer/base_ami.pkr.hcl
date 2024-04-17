@@ -16,7 +16,7 @@ locals {
   region    = "ap-southeast-1"
 }
 
-source "amazon-ebs" "centos_stream_9" {
+source "amazon-ebs" "hip" {
   ami_name      = "CentOS-9-Base-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
@@ -27,7 +27,7 @@ source "amazon-ebs" "centos_stream_9" {
 build {
   name = "build-base-ami"
   sources = [
-    "source.amazon-ebs.centos_stream_9"
+    "source.amazon-ebs.hip"
   ]
 
   provisioner "shell" {

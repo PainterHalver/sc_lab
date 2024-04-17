@@ -1,4 +1,4 @@
-data "aws_ami" "centos_stream_9" {
+data "aws_ami" "jenkins" {
   most_recent = true
   owners      = ["self"]
 
@@ -7,3 +7,18 @@ data "aws_ami" "centos_stream_9" {
     values = ["CentOS-9-Jenkins-*", ]
   }
 }
+
+data "aws_ami" "jenkins_agent" {
+  most_recent = true
+  owners      = ["679593333241"]
+
+  filter {
+    name   = "name"
+    values = ["CentOS-Stream-ec2-9-*"]
+  }
+}
+
+# data "aws_ami" "jenkins" {
+#   most_recent = true
+#   owners      = ["amazon"]
+# }

@@ -1,5 +1,5 @@
 resource "aws_instance" "ec2_jenkins" {
-  ami                  = data.aws_ami.centos_stream_9.id
+  ami                  = data.aws_ami.jenkins.id
   instance_type        = "t3.small"
   key_name             = aws_key_pair.ssh_pubkey.key_name
   iam_instance_profile = module.ec2_jenkins_profle.profile_name
@@ -11,7 +11,14 @@ resource "aws_instance" "ec2_jenkins" {
     volume_size           = 10
   }
 
-  user_data = templatefile("${path.module}/user-data/jenkins_master.sh", {})
+  user_data = templatefile("${path.module}/user-data/jenkins_master.sh.tftpl", {
+    agent_region               = var.aws_region
+    agent_az                   = var.aws_availability_zone
+    agent_sg_name              = aws_security_group.jenkins_sg.name
+    agent_subnet_id            = aws_default_subnet.default_az1.id
+    agent_instance_profile_arn = module.ec2_jenkins_profle.profile_arn
+    agent_ami_id               = data.aws_ami.jenkins_agent.id
+  })
 
   tags = merge(var.default_tags, {
     Name = "ec2-jenkins"
@@ -111,6 +118,34 @@ module "ec2_jenkins_profle" {
         "sts:GetServiceBearerToken"
       ]
       effect   = "Allow"
+      resource = "*"
+    },
+    {
+      name = "EC2JenkinsPluginPolicy"
+      action = [
+        "ec2:DescribeSpotInstanceRequests",
+        "ec2:CancelSpotInstanceRequests",
+        "ec2:GetConsoleOutput",
+        "ec2:RequestSpotInstances",
+        "ec2:RunInstances",
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:TerminateInstances",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeKeyPairs",
+        "ec2:DescribeRegions",
+        "ec2:DescribeImages",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "iam:ListInstanceProfilesForRole",
+        "iam:PassRole",
+        "ec2:GetPasswordData"
+      ],
+      effect   = "Allow",
       resource = "*"
     }
   ]

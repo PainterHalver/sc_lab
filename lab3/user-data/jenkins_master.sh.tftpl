@@ -1,3 +1,9 @@
+#!/bin/bash
+
+set -exo pipefail
+
+# Create Jenkins configuration as code file
+cat >> /var/lib/jenkins/casc.yaml <<EOF
 credentials:
   system:
     domainCredentials:
@@ -7,7 +13,7 @@ credentials:
               id: "sonarqube_token"
               secret: "1144a76b7bb87021f2054c47396e4eb0b349c7fa"
               description: "SonarQube Token"
-          - basicSSHUserPrivateKey:
+          - basicSSHUserPrivateKey: # Change here
               description: "SSH Key Jenkins Master used to connect to Jenkins agent"
               id: "ssh-key-for-jenkins-agent"
               privateKeySource:
@@ -58,10 +64,10 @@ jenkins:
   - amazonEC2:
       name: "ec2-agent-cloud"
       noDelayProvisioning: true
-      region: "ap-southeast-1" # Change here
+      region: "${agent_region}" # Change here
       sshKeysCredentialsId: "ssh-key-for-jenkins-agent"
       templates:
-      - ami: "ami-07dc7fbc73bffbeb5" # Change here
+      - ami: "${agent_ami_id}" # Change here
         amiType:
           unixData:
             sshPort: "22"
@@ -73,7 +79,7 @@ jenkins:
         ebsEncryptRootVolume: DEFAULT
         ebsOptimized: false
         hostKeyVerificationStrategy: 'OFF'
-        iamInstanceProfile: "arn:aws:iam::008189915245:instance-profile/EC2JenkinsProfile" # Change here
+        iamInstanceProfile: "${agent_instance_profile_arn}" # Change here
         idleTerminationMinutes: "30"
         instanceCapStr: "1"
         javaPath: "java"
@@ -83,16 +89,16 @@ jenkins:
         metadataHopsLimit: 1
         metadataSupported: true
         metadataTokensRequired: false
-        minimumNumberOfInstances: 1
+        minimumNumberOfInstances: 0
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
         monitoring: false
         numExecutors: 2
         remoteAdmin: "ec2-user"
         remoteFS: "/home/ec2-user"
-        securityGroups: "jenkins-sg" # Change here
+        securityGroups: "${agent_sg_name}" # Change here
         stopOnTerminate: false
-        subnetId: "subnet-011b9fff224a65e49" # Change here
+        subnetId: "${agent_subnet_id}" # Change here
         t2Unlimited: false
         tags:
         - name: "Name"
@@ -127,7 +133,8 @@ jenkins:
           sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           sudo yum install -y docker-ce docker-ce-cli containerd.io
           usermod -aG docker ec2-user
-        zone: "ap-southeast-1a" # Change here
+          systemctl start docker
+        zone: "${agent_az}" # Change here
       useInstanceProfileForCredentials: true
 security:
   globalJobDslSecurityConfiguration:
@@ -195,3 +202,7 @@ jobs:
           wsCleanup()
         }
       }
+EOF
+
+# Restart Jenkins
+systemctl restart jenkins

@@ -17,3 +17,8 @@ resource "aws_key_pair" "ssh_pubkey" {
 
   tags = var.default_tags
 }
+
+resource "aws_key_pair" "jenkins_agent_key_pair" {
+  key_name   = "jenkins-agent-key"
+  public_key = file("${path.module}/misc/jenkins_agent.pem.pub")
+}
