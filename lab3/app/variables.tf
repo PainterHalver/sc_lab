@@ -8,6 +8,11 @@ variable "aws_availability_zone" {
   nullable    = false
 }
 
+variable "aws_availability_zone_2" {
+  description = "The AZ to deploy the second private subnet in, this is needed for RDS and should be different from the first AZ"
+  nullable    = false
+}
+
 variable "instance_type" {
   description = "The general type of instance to launch"
   default     = "t2.micro"
@@ -22,4 +27,9 @@ variable "default_tags" {
   description = "The default tags to apply to all resources"
   type        = map(string)
   default     = {}
+}
+
+variable "db_admin_password" {
+  description = "The password of the admin user of the RDS instance"
+  type        = string
 }

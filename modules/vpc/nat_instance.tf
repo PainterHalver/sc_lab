@@ -120,7 +120,7 @@ resource "aws_instance" "ec2_nat" {
   ami                  = data.aws_ami.centos_stream_9[0].id
   key_name             = aws_key_pair.ssh_pubkey_nat[0].key_name
   subnet_id            = aws_subnet.public_subnet.id
-  security_groups      = [aws_security_group.sg_nat[0].id]
+  vpc_security_group_ids = [ aws_security_group.sg_nat[0].id ]
   source_dest_check    = false
   iam_instance_profile = var.with_nat_instance.instance_profile_name
 

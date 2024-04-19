@@ -25,3 +25,7 @@ output "nat_private_dns" {
 output "sg_nat_id" {
   value = var.with_nat_instance.enabled ? aws_security_group.sg_nat[0].id : null
 }
+
+output "database_subnet_ids" {
+  value = aws_subnet.database_subnets[*].id
+}

@@ -26,7 +26,7 @@ resource "aws_config_config_rule" "no_unrestricted_traffic_sg" {
 // => aws_config_configuration_recorder_status
 resource "aws_config_configuration_recorder_status" "status" {
   name       = aws_config_configuration_recorder.config_recorder.name
-  is_enabled = true
+  is_enabled = false // TODO: Change to true
   depends_on = [aws_config_delivery_channel.config_delivery_channel]
 }
 
