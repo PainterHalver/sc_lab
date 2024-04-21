@@ -14,7 +14,9 @@ resource "aws_autoscaling_group" "app_asg" {
 
   instance_refresh {
     strategy = "Rolling"
-    # triggers = [ "tag" ]
+    # preferences {
+    #   min_healthy_percentage = 100 // 100% of instances must remain healthy
+    # }
   }
 }
 
@@ -50,7 +52,7 @@ resource "aws_launch_template" "app" {
   }
 
   # block_device_mappings {
-  #   device_name = 
+  #   device_name =
   #   ebs {
   #     volume_size           = 10
   #     delete_on_termination = true
@@ -117,10 +119,10 @@ resource "aws_security_group" "app_sg" {
   vpc_id      = module.vpc_with_nat_instance.vpc_id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] // TODO: Use load balancer's Security Group
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   ingress {
