@@ -36,4 +36,6 @@ resource "aws_subnet" "public_subnet_2" {
   vpc_id            = module.vpc_with_nat_instance.vpc_id
   cidr_block        = "10.0.4.0/24"
   availability_zone = var.aws_availability_zone_2
+
+  tags = var.default_tags
 }

@@ -32,4 +32,6 @@
 #     protocol    = "tcp"
 #     cidr_blocks = [module.vpc.vpc_cidr] # TODO: Restrict this
 #   }
+#
+#   tags = var.default_tags
 # }

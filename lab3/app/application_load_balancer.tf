@@ -6,6 +6,8 @@ resource "aws_lb" "app_alb" {
   security_groups    = [aws_security_group.alb_sg.id]
 
   # enable_deletion_protection = true
+
+  tags = var.default_tags
 }
 
 resource "aws_security_group" "alb_sg" {
@@ -25,6 +27,8 @@ resource "aws_security_group" "alb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = var.default_tags
 }
 
 // HTTP LISTENER
@@ -36,6 +40,8 @@ resource "aws_lb_listener" "http_alb_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ec2_app_http_target_group.arn
   }
+
+  tags = var.default_tags
 }
 
 resource "aws_lb_target_group" "ec2_app_http_target_group" {
@@ -47,4 +53,6 @@ resource "aws_lb_target_group" "ec2_app_http_target_group" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = var.default_tags
 }

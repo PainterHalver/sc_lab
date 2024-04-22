@@ -2,6 +2,8 @@
 # #   name                = "every-1-day"
 # #   description         = "Fires every 1 day"
 # #   schedule_expression = "rate(1 day)"
+
+# #   tags = var.default_tags
 # # }
 
 # # resource "aws_cloudwatch_event_target" "every_1_day" {
@@ -23,6 +25,8 @@
 #   name  = "current-hip-ami-id"
 #   type  = "String"
 #   value = "ami-12345"
+
+#   tags = var.default_tags
 # }
 
 # resource "aws_lambda_function" "lambda_check_ami" {
@@ -39,6 +43,8 @@
 
 #   filename = "lambda.zip"
 #   handler  = "lambda.lambda_handler"
+
+#   tags = var.default_tags
 # }
 
 # data "archive_file" "lambda" {
@@ -96,4 +102,6 @@
 #       ]
 #     })
 #   }
+
+#   tags = var.default_tags
 # }
