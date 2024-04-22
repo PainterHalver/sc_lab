@@ -20,12 +20,6 @@ resource "aws_route_table" "private_subnet_route_table" {
   tags = var.default_tags
 }
 
-resource "aws_route" "private_to_local_route" {
-  route_table_id         = aws_route_table.private_subnet_route_table.id
-  destination_cidr_block = aws_vpc.vpc.cidr_block
-  gateway_id             = "local"
-}
-
 resource "aws_route" "private_to_nat_route" {
   count                  = var.with_nat_instance.enabled ? 1 : 0
   route_table_id         = aws_route_table.private_subnet_route_table.id
