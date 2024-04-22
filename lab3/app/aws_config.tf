@@ -22,6 +22,23 @@ resource "aws_config_config_rule" "no_unrestricted_traffic_sg" {
   tags       = var.default_tags
 }
 
+resource "aws_config_config_rule" "required_tags" {
+  name        = "required-tags"
+  description = "Check if resources have required tags Group:CyberDevOps and Environment:development"
+  input_parameters = jsonencode({
+    tag1Key   = "Group",
+    tag1Value = "CyberDevOps",
+    tag2Key   = "Environment",
+    tag2Value = "Development"
+  })
+  source {
+    owner             = "AWS"
+    source_identifier = "REQUIRED_TAGS"
+  }
+  depends_on = [aws_config_configuration_recorder.config_recorder]
+  tags       = var.default_tags
+}
+
 // `Recorder` needs `Delivery channel` to start, but `Delivery channel` needs `Recorder` to be created.
 // => aws_config_configuration_recorder_status
 resource "aws_config_configuration_recorder_status" "status" {
