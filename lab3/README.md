@@ -112,10 +112,17 @@ volumes:
   - Jenkins with Lambda, Eventbridge.
   - App: ASG, ALB, RDS, Config, EFS, S3, CloudWatch.
 
-#### How to patch app ASG
+#### Patch app ASG launch template
 
-- Update launch_template with the new AMI??
-- Use "instance refresh"
+**On new AMI release:**
+
+- BaseAMI pipeline finished -> Trigger build app AMI
+- When want to deploy, run PythonAppCD pipeline. Terraform uses AMI datasource and detects change in ami-id -> New launch_template -> ASG Instance Refresh.
+
+**On new code pushed to GitHub:**
+
+- Jenkins pull for GitHub repo changes -> Trigger PythonAppCI pipeline: SonarQube, push to ECR.
+- When want to deploy, run PythonAppCD pipeline. Pipeline gets latest commit hash, pass as variable to terraform -> New launch_template -> ASG Instance Refresh.
 
 #### How can app get data about RDS URL, Bucket name?
 

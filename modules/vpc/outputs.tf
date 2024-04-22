@@ -29,3 +29,7 @@ output "sg_nat_id" {
 output "database_subnet_ids" {
   value = aws_subnet.database_subnets[*].id
 }
+
+output "public_subnet_route_table_id" {
+  value = aws_route_table.public_subnet_route_table.id
+}

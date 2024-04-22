@@ -37,5 +37,12 @@ resource "aws_subnet" "public_subnet_2" {
   cidr_block        = "10.0.4.0/24"
   availability_zone = var.aws_availability_zone_2
 
-  tags = var.default_tags
+  tags = merge(var.default_tags, {
+    "Name" = "Public Subnet 2"
+  })
+}
+
+resource "aws_route_table_association" "public_subnet_2_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = module.vpc_with_nat_instance.public_subnet_route_table_id
 }
