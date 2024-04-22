@@ -3,6 +3,11 @@ resource "aws_ssm_parameter" "app_db_password" {
   type  = "String"
   value = var.db_admin_password
 
+  // Does not reapply the value if it changes
+  lifecycle {
+    ignore_changes = [value, tags]
+  }
+
   tags = var.default_tags
 }
 
@@ -13,7 +18,7 @@ resource "aws_db_instance" "app_database" {
   engine            = "mysql"
   engine_version    = "8.0.33"
   instance_class    = "db.t3.micro"
-  username          = "admin"
+  username          = var.db_admin_user
   password          = var.db_admin_password
   availability_zone = var.aws_availability_zone
 

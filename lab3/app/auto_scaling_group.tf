@@ -1,11 +1,12 @@
 resource "aws_autoscaling_group" "app_asg" {
   name                      = "app-auto-scaling-group"
-  desired_capacity          = 1
+  desired_capacity          = 2
   min_size                  = 1
-  max_size                  = 2
+  max_size                  = 3
   vpc_zone_identifier       = [module.vpc_with_nat_instance.private_subnet_id]    # Use this instead of availability_zones
   target_group_arns         = [aws_lb_target_group.ec2_app_http_target_group.arn] # Use this, load_balancers is for CLB
-  health_check_grace_period = 60
+  health_check_grace_period = 270                                                 // Wait for 270 seconds before health-check, for user-data to complete
+  health_check_type         = "ELB"                                               // Use ALB target group HTTP health check 
 
   launch_template {
     id      = aws_launch_template.app.id
@@ -14,9 +15,9 @@ resource "aws_autoscaling_group" "app_asg" {
 
   instance_refresh {
     strategy = "Rolling"
-    # preferences {
-    #   min_healthy_percentage = 100 // 100% of instances must remain healthy
-    # }
+    preferences {
+      min_healthy_percentage = 50 // 50% of instances must remain healthy
+    }
   }
 }
 
@@ -29,7 +30,8 @@ resource "aws_launch_template" "app" {
   instance_initiated_shutdown_behavior = "terminate"
 
   user_data = base64encode(templatefile("${path.module}/user-data/app.sh.tftpl", {
-    db_uri      = "mysql+pymysql://${aws_db_instance.app_database.username}:${aws_db_instance.app_database.password}@${aws_db_instance.app_database.endpoint}/${aws_db_instance.app_database.db_name}",
+    db_user     = var.db_admin_user,
+    db_uri      = "${aws_db_instance.app_database.endpoint}/${aws_db_instance.app_database.db_name}",
     bucket_name = aws_s3_bucket.sc_lab3_app_bucket.bucket
   }))
 
@@ -48,6 +50,7 @@ resource "aws_launch_template" "app" {
     resource_type = "instance"
     tags = merge(var.default_tags, {
       Name = "asg-app-instance"
+      CommitHash = var.app_git_commit_hash
     })
   }
 
@@ -103,6 +106,14 @@ module "app_instance_profile" {
         "cloudtrail:DescribeTrails",
         "cloudtrail:GetTrailStatus",
         "cloudtrail:LookupEvents"
+      ],
+      resource = "*"
+    },
+    {
+      name   = "ReadSSMParameterPolicy"
+      effect = "Allow"
+      action = [
+        "ssm:GetParameter",
       ],
       resource = "*"
     }

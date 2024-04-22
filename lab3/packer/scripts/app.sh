@@ -11,19 +11,4 @@ if ! command -v docker; then
   systemctl enable docker --now
 fi
 
-# Clone the repository
-git clone https://github.com/painterhalver/sc_lab3_app.git --depth 1
-cd sc_lab3_app
-
-# Export the environment variables DATABASE_URI and BUCKET_NAME
-cat <<EOF > .env
-DEBUG=False
-DATABASE_USER="${db_user}"
-DATABASE_URI="${db_uri}"
-BUCKET_NAME="${bucket_name}"
-EOF
-
-# Run the application
-docker compose up -d
-
 echo "OK!" > /root/done.txt

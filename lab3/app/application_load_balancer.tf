@@ -45,13 +45,21 @@ resource "aws_lb_listener" "http_alb_listener" {
 }
 
 resource "aws_lb_target_group" "ec2_app_http_target_group" {
-  name     = "ec2-app-http-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = module.vpc_with_nat_instance.vpc_id
+  name                 = "ec2-app-http-tg"
+  port                 = 80
+  protocol             = "HTTP"
+  vpc_id               = module.vpc_with_nat_instance.vpc_id
+  deregistration_delay = 30
 
-  lifecycle {
-    create_before_destroy = true
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    interval            = 10
+    path                = "/health"
+    port                = "80"
+    protocol            = "HTTP"
+    timeout             = 3
   }
 
   tags = var.default_tags

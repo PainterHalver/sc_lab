@@ -13,6 +13,12 @@ mv packer /usr/bin/packer
 hash -r
 rm packer_1.10.2_linux_amd64.zip
 
+# Download terraform
+wget https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip
+unzip terraform_1.7.5_linux_amd64.zip
+mv terraform /usr/bin/terraform
+rm terraform_1.7.5_linux_amd64.zip
+
 # Install AWS CLI if not already installed:
 if ! command -v aws && [ ! -f /usr/local/bin/aws ]; then
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"

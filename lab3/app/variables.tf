@@ -29,7 +29,17 @@ variable "default_tags" {
   default     = {}
 }
 
+variable "db_admin_user" {
+  description = "The admin user of the RDS instance"
+  type        = string
+}
+
 variable "db_admin_password" {
   description = "The password of the admin user of the RDS instance"
+  type        = string
+}
+
+variable "app_git_commit_hash" {
+  description = "The hash of the latest git commit, used to update if the ASG launch template"
   type        = string
 }
