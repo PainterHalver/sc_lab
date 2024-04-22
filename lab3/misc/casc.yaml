@@ -190,6 +190,7 @@ jobs:
             external('lab3/jenkins_jobs/BuildBaseAMI.dsl')
             external('lab3/jenkins_jobs/BuildAppAMI.dsl')
             external('lab3/jenkins_jobs/PythonAppCI.dsl')
+            external('lab3/jenkins_jobs/PythonAppCD.dsl')
           }
         }
         publishers {

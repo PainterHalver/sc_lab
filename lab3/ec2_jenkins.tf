@@ -147,6 +147,24 @@ module "ec2_jenkins_profle" {
       ],
       effect   = "Allow",
       resource = "*"
+    },
+    {
+      name = "EC2JenkinsOtherPoliciesForTerraform"
+      action = [
+        "config:*",
+      ],
+      effect   = "Allow",
+      resource = "*"
     }
+  ]
+
+  // For PythonCD job
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+    "arn:aws:iam::aws:policy/AmazonRDSFullAccess",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+    "arn:aws:iam::aws:policy/IAMFullAccess",
+    "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
   ]
 }
