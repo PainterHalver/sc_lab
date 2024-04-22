@@ -2,7 +2,7 @@
 
 set -exo pipefail
 
-yum install -y git unzip
+yum install -y git unzip nfs-utils
 
 # Install docker if not already installed
 if ! command -v docker; then

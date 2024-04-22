@@ -3,7 +3,7 @@
 set -exo pipefail
 
 # Install dependencies
-yum install -y wget git nfs-utils unzip yum-utils
+yum install -y wget git unzip yum-utils
 
 # Download packer
 wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
