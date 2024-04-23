@@ -1,16 +1,16 @@
-resource "aws_lb" "app_alb" {
+resource "aws_lb" "app" {
   name               = "app-alb"
   internal           = false
   load_balancer_type = "application"
   subnets            = [module.vpc_with_nat_instance.public_subnet_id, aws_subnet.public_2.id]
-  security_groups    = [aws_security_group.alb_sg.id]
+  security_groups    = [aws_security_group.alb.id]
 
   # enable_deletion_protection = true
 
   tags = var.default_tags
 }
 
-resource "aws_security_group" "alb_sg" {
+resource "aws_security_group" "alb" {
   name   = "app-alb-sg"
   vpc_id = module.vpc_with_nat_instance.vpc_id
 
@@ -32,19 +32,19 @@ resource "aws_security_group" "alb_sg" {
 }
 
 // HTTP LISTENER
-resource "aws_lb_listener" "http_alb_listener" {
-  load_balancer_arn = aws_lb.app_alb.arn
+resource "aws_lb_listener" "app" {
+  load_balancer_arn = aws_lb.app.arn
   port              = 80
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ec2_app_http_target_group.arn
+    target_group_arn = aws_lb_target_group.ec2_app_http.arn
   }
 
   tags = var.default_tags
 }
 
-resource "aws_lb_target_group" "ec2_app_http_target_group" {
+resource "aws_lb_target_group" "ec2_app_http" {
   name                 = "ec2-app-http-tg"
   port                 = 80
   protocol             = "HTTP"

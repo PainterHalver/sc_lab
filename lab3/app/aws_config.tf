@@ -7,7 +7,7 @@ resource "aws_config_config_rule" "no_unattached_sg" {
     owner             = "AWS"
     source_identifier = "EC2_SECURITY_GROUP_ATTACHED_TO_ENI"
   }
-  depends_on = [aws_config_configuration_recorder.config_recorder]
+  depends_on = [aws_config_configuration_recorder.this]
   tags       = var.default_tags
 }
 
@@ -18,7 +18,7 @@ resource "aws_config_config_rule" "no_unrestricted_traffic_sg" {
     owner             = "AWS"
     source_identifier = "VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS"
   }
-  depends_on = [aws_config_configuration_recorder.config_recorder]
+  depends_on = [aws_config_configuration_recorder.this]
   tags       = var.default_tags
 }
 
@@ -35,22 +35,22 @@ resource "aws_config_config_rule" "required_tags" {
     owner             = "AWS"
     source_identifier = "REQUIRED_TAGS"
   }
-  depends_on = [aws_config_configuration_recorder.config_recorder]
+  depends_on = [aws_config_configuration_recorder.this]
   tags       = var.default_tags
 }
 
 // `Recorder` needs `Delivery channel` to start, but `Delivery channel` needs `Recorder` to be created.
 // => aws_config_configuration_recorder_status
-resource "aws_config_configuration_recorder_status" "status" {
-  name       = aws_config_configuration_recorder.config_recorder.name
+resource "aws_config_configuration_recorder_status" "this" {
+  name       = aws_config_configuration_recorder.this.name
   is_enabled = false // TODO: Change to true
-  depends_on = [aws_config_delivery_channel.config_delivery_channel]
+  depends_on = [aws_config_delivery_channel.this]
 }
 
 // CONFIG RECORDER
-resource "aws_config_configuration_recorder" "config_recorder" {
+resource "aws_config_configuration_recorder" "this" {
   name     = "my-config-recorder"
-  role_arn = aws_iam_role.aws_config_role.arn
+  role_arn = aws_iam_role.aws_config.arn
 
   recording_group {
     all_supported                 = false
@@ -63,7 +63,7 @@ resource "aws_config_configuration_recorder" "config_recorder" {
   }
 }
 
-resource "aws_iam_role" "aws_config_role" {
+resource "aws_iam_role" "aws_config" {
   name        = "MyAWSConfigRole"
   description = "Role for AWS Config service"
 
@@ -95,8 +95,8 @@ resource "aws_iam_role" "aws_config_role" {
           ],
           Effect = "Allow",
           Resource = [
-            aws_s3_bucket.config_bucket.arn,
-            "${aws_s3_bucket.config_bucket.arn}/*"
+            aws_s3_bucket.config.arn,
+            "${aws_s3_bucket.config.arn}/*"
           ]
         }
       ]
@@ -107,13 +107,13 @@ resource "aws_iam_role" "aws_config_role" {
 }
 
 // DELIVERY CHANNEL
-resource "aws_config_delivery_channel" "config_delivery_channel" {
+resource "aws_config_delivery_channel" "this" {
   name           = "my-delivery-channel"
-  s3_bucket_name = aws_s3_bucket.config_bucket.bucket
-  depends_on     = [aws_config_configuration_recorder.config_recorder]
+  s3_bucket_name = aws_s3_bucket.config.bucket
+  depends_on     = [aws_config_configuration_recorder.this]
 }
 
-resource "aws_s3_bucket" "config_bucket" {
+resource "aws_s3_bucket" "config" {
   bucket        = "sc-aws-config-bucket"
   force_destroy = true
   tags          = var.default_tags

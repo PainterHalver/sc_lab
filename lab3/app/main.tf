@@ -24,7 +24,7 @@ module "vpc_with_nat_instance" {
   default_tags = var.default_tags
 }
 
-resource "aws_key_pair" "ssh_pubkey" {
+resource "aws_key_pair" "app" {
   key_name   = "ssh-pubkey-app"
   public_key = file(var.ssh_pubkey_path)
 

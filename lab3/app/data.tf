@@ -1,4 +1,4 @@
-data "aws_ami" "auto_scaling_group_ami" {
+data "aws_ami" "app" {
   most_recent = true
   owners      = ["self", "679593333241"] // TODO: remove testing centos
 

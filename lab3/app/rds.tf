@@ -11,7 +11,7 @@ resource "aws_ssm_parameter" "app_db_password" {
   tags = var.default_tags
 }
 
-resource "aws_db_instance" "app_database" {
+resource "aws_db_instance" "app" {
   allocated_storage = 10
   identifier        = "app-db"
   db_name           = "sc_lab3_app"
@@ -25,8 +25,8 @@ resource "aws_db_instance" "app_database" {
   auto_minor_version_upgrade          = false
   network_type                        = "IPV4"
   publicly_accessible                 = false
-  db_subnet_group_name                = aws_db_subnet_group.app_db_subnet_group.name
-  vpc_security_group_ids              = [aws_security_group.rds_app_sg.id]
+  db_subnet_group_name                = aws_db_subnet_group.app.name
+  vpc_security_group_ids              = [aws_security_group.rds_app.id]
   iam_database_authentication_enabled = true
   skip_final_snapshot                 = true
 
@@ -34,7 +34,7 @@ resource "aws_db_instance" "app_database" {
 }
 
 // SUBNET GROUP
-resource "aws_db_subnet_group" "app_db_subnet_group" {
+resource "aws_db_subnet_group" "app" {
   name       = "app-db-subnet-group"
   subnet_ids = module.vpc_with_nat_instance.database_subnet_ids
 
@@ -42,7 +42,7 @@ resource "aws_db_subnet_group" "app_db_subnet_group" {
 }
 
 // RDS SECURITY GROUP
-resource "aws_security_group" "rds_app_sg" {
+resource "aws_security_group" "rds_app" {
   name        = "rds-app-sg"
   description = "Security group for the app database"
   vpc_id      = module.vpc_with_nat_instance.vpc_id

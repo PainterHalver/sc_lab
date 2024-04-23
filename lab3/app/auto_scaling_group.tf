@@ -1,10 +1,10 @@
-resource "aws_autoscaling_group" "app_asg" {
+resource "aws_autoscaling_group" "app" {
   name                      = "app-auto-scaling-group"
   desired_capacity          = 2
   min_size                  = 1
   max_size                  = 3
   vpc_zone_identifier       = [module.vpc_with_nat_instance.private_subnet_id]    # Use this instead of availability_zones
-  target_group_arns         = [aws_lb_target_group.ec2_app_http_target_group.arn] # Use this, load_balancers is for CLB
+  target_group_arns         = [aws_lb_target_group.ec2_app_http.arn] # Use this, load_balancers is for CLB
   health_check_grace_period = 270                                                 // Wait for 270 seconds before health-check, for user-data to complete
   health_check_type         = "ELB"                                               // Use ALB target group HTTP health check 
 
@@ -24,15 +24,15 @@ resource "aws_autoscaling_group" "app_asg" {
 resource "aws_launch_template" "app" {
   name                                 = "app-launch-template"
   description                          = "Launch template for the app EC2 instances"
-  image_id                             = data.aws_ami.auto_scaling_group_ami.id
+  image_id                             = data.aws_ami.app.id
   instance_type                        = var.instance_type
-  key_name                             = aws_key_pair.ssh_pubkey.key_name
+  key_name                             = aws_key_pair.app.key_name
   instance_initiated_shutdown_behavior = "terminate"
 
   user_data = base64encode(templatefile("${path.module}/user-data/app.sh.tftpl", {
     db_user     = var.db_admin_user,
-    db_uri      = "${aws_db_instance.app_database.endpoint}/${aws_db_instance.app_database.db_name}",
-    bucket_name = aws_s3_bucket.sc_lab3_app_bucket.bucket
+    db_uri      = "${aws_db_instance.app.endpoint}/${aws_db_instance.app.db_name}",
+    bucket_name = aws_s3_bucket.app.bucket
   }))
 
   iam_instance_profile {
@@ -42,7 +42,7 @@ resource "aws_launch_template" "app" {
   network_interfaces {
     delete_on_termination = true
     device_index          = 0
-    security_groups       = [aws_security_group.app_sg.id]
+    security_groups       = [aws_security_group.app.id]
     subnet_id             = module.vpc_with_nat_instance.private_subnet_id
   }
 
@@ -82,7 +82,7 @@ module "app_instance_profile" {
       action = [
         "s3:*",
       ],
-      resource = "${aws_s3_bucket.sc_lab3_app_bucket.arn}/*"
+      resource = "${aws_s3_bucket.app.arn}/*"
     },
     {
       name   = "AppS3BucketAccess"
@@ -90,7 +90,7 @@ module "app_instance_profile" {
       action = [
         "s3:*",
       ],
-      resource = "${aws_s3_bucket.sc_lab3_app_bucket.arn}"
+      resource = "${aws_s3_bucket.app.arn}"
     },
     {
       name   = "ConfigReadOnlyAccessPolicy"
@@ -124,7 +124,7 @@ module "app_instance_profile" {
   ]
 }
 
-resource "aws_security_group" "app_sg" {
+resource "aws_security_group" "app" {
   name        = "app-sg"
   description = "Security group for the app EC2 instances"
   vpc_id      = module.vpc_with_nat_instance.vpc_id
@@ -133,7 +133,7 @@ resource "aws_security_group" "app_sg" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]
+    security_groups = [aws_security_group.alb.id]
   }
 
   ingress {
