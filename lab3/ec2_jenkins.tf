@@ -1,10 +1,10 @@
-resource "aws_instance" "ec2_jenkins" {
+resource "aws_instance" "jenkins" {
   ami                  = data.aws_ami.jenkins.id
   instance_type        = "t3.small"
-  key_name             = aws_key_pair.ssh_pubkey.key_name
+  key_name             = aws_key_pair.jenkins.key_name
   iam_instance_profile = module.ec2_jenkins_profle.profile_name
-  subnet_id            = aws_default_subnet.default_az1.id
-  security_groups      = [aws_security_group.jenkins_sg.id]
+  subnet_id            = aws_default_subnet.az1.id
+  security_groups      = [aws_security_group.jenkins.id]
 
   root_block_device {
     delete_on_termination = true
@@ -14,8 +14,8 @@ resource "aws_instance" "ec2_jenkins" {
   user_data = templatefile("${path.module}/user-data/jenkins_master.sh.tftpl", {
     agent_region               = var.aws_region
     agent_az                   = var.aws_availability_zone
-    agent_sg_name              = aws_security_group.jenkins_sg.name
-    agent_subnet_id            = aws_default_subnet.default_az1.id
+    agent_sg_name              = aws_security_group.jenkins.name
+    agent_subnet_id            = aws_default_subnet.az1.id
     agent_instance_profile_arn = module.ec2_jenkins_profle.profile_arn
     agent_ami_id               = data.aws_ami.jenkins_agent.id
   })
@@ -25,9 +25,9 @@ resource "aws_instance" "ec2_jenkins" {
   })
 }
 
-resource "aws_security_group" "jenkins_sg" {
+resource "aws_security_group" "jenkins" {
   name   = "jenkins-sg"
-  vpc_id = aws_default_subnet.default_az1.vpc_id
+  vpc_id = aws_default_subnet.az1.vpc_id
 
   ingress {
     from_port   = 22
