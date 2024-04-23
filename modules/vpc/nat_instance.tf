@@ -25,17 +25,17 @@ data "aws_ami" "centos_stream_9" {
   }
 }
 
-resource "aws_key_pair" "ssh_pubkey_nat" {
+resource "aws_key_pair" "nat" {
   count      = var.with_nat_instance.enabled ? 1 : 0
   key_name   = "ssh-pubkey-nat"
   public_key = file(var.with_nat_instance.ssh_pubkey_path)
 }
 
 # https://docs.aws.amazon.com/vpc/latest/userguide/VPC_NAT_Instance.html#NATSG
-resource "aws_security_group" "sg_nat" {
+resource "aws_security_group" "nat" {
   count  = var.with_nat_instance.enabled ? 1 : 0
   name   = "ec2-nat-sg"
-  vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.this.id
 
   ingress {
     from_port   = 22
@@ -114,13 +114,13 @@ resource "aws_security_group" "sg_nat" {
   tags = var.default_tags
 }
 
-resource "aws_instance" "ec2_nat" {
+resource "aws_instance" "nat" {
   count                = var.with_nat_instance.enabled ? 1 : 0
   instance_type        = "t2.micro"
   ami                  = data.aws_ami.centos_stream_9[0].id
-  key_name             = aws_key_pair.ssh_pubkey_nat[0].key_name
-  subnet_id            = aws_subnet.public_subnet.id
-  vpc_security_group_ids = [ aws_security_group.sg_nat[0].id ]
+  key_name             = aws_key_pair.nat[0].key_name
+  subnet_id            = aws_subnet.public.id
+  vpc_security_group_ids = [ aws_security_group.nat[0].id ]
   source_dest_check    = false
   iam_instance_profile = var.with_nat_instance.instance_profile_name
 

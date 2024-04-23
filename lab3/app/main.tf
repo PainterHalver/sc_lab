@@ -32,7 +32,7 @@ resource "aws_key_pair" "ssh_pubkey" {
 }
 
 // Add another public subnet because ALB requires at least two subnets
-resource "aws_subnet" "public_subnet_2" {
+resource "aws_subnet" "public_2" {
   vpc_id            = module.vpc_with_nat_instance.vpc_id
   cidr_block        = "10.0.4.0/24"
   availability_zone = var.aws_availability_zone_2
@@ -42,7 +42,7 @@ resource "aws_subnet" "public_subnet_2" {
   })
 }
 
-resource "aws_route_table_association" "public_subnet_2_association" {
-  subnet_id      = aws_subnet.public_subnet_2.id
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = aws_subnet.public_2.id
   route_table_id = module.vpc_with_nat_instance.public_subnet_route_table_id
 }

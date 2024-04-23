@@ -1,5 +1,5 @@
-resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.vpc.id
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.this.id
   cidr_block              = var.public_subnet_cidr
   availability_zone       = var.subnet_az
   map_public_ip_on_launch = true
@@ -9,8 +9,8 @@ resource "aws_subnet" "public_subnet" {
   })
 }
 
-resource "aws_subnet" "private_subnet" {
-  vpc_id            = aws_vpc.vpc.id
+resource "aws_subnet" "private" {
+  vpc_id            = aws_vpc.this.id
   cidr_block        = var.private_subnet_cidr
   availability_zone = var.subnet_az
 
@@ -19,9 +19,9 @@ resource "aws_subnet" "private_subnet" {
   })
 }
 
-resource "aws_subnet" "database_subnets" {
+resource "aws_subnet" "database" {
   count             = length(var.database_subnets)
-  vpc_id            = aws_vpc.vpc.id
+  vpc_id            = aws_vpc.this.id
   cidr_block        = var.database_subnets[count.index].cidr_block
   availability_zone = var.database_subnets[count.index].availability_zone
 
