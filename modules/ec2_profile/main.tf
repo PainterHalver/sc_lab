@@ -1,5 +1,5 @@
 // https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html
-resource "aws_iam_role" "ec2_role" {
+resource "aws_iam_role" "this" {
   name        = var.role_name
   description = var.role_description
 
@@ -19,10 +19,10 @@ resource "aws_iam_role" "ec2_role" {
   tags = var.default_tags
 }
 
-resource "aws_iam_role_policy" "role_inline_policy" {
+resource "aws_iam_role_policy" "inline" {
   count = length(var.inline_policies)
   name  = var.inline_policies[count.index].name
-  role  = aws_iam_role.ec2_role.id
+  role  = aws_iam_role.this.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -36,16 +36,16 @@ resource "aws_iam_role_policy" "role_inline_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "managed_policy_role_attachment" {
+resource "aws_iam_role_policy_attachment" "managed" {
   count      = length(var.managed_policy_arns)
-  role       = aws_iam_role.ec2_role.name
+  role       = aws_iam_role.this.name
   policy_arn = var.managed_policy_arns[count.index]
 }
 
 # Attach this to EC2
-resource "aws_iam_instance_profile" "ec2_cloudwatch_instance_profile" {
+resource "aws_iam_instance_profile" "this" {
   name = var.profile_name
-  role = aws_iam_role.ec2_role.name
+  role = aws_iam_role.this.name
 
   tags = var.default_tags
 }
