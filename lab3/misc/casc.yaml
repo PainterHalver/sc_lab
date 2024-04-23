@@ -1,0 +1,199 @@
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "sonarqube_token"
+              secret: "1144a76b7bb87021f2054c47396e4eb0b349c7fa"
+              description: "SonarQube Token"
+          - basicSSHUserPrivateKey:
+              description: "SSH Key Jenkins Master used to connect to Jenkins agent"
+              id: "ssh-key-for-jenkins-agent"
+              privateKeySource:
+                directEntry:
+                  privateKey: |
+                    -----BEGIN RSA PRIVATE KEY-----
+                    MIIEowIBAAKCAQEA6lOlXmQcRF/j1YvbTm3Rq+nLYP5Qsk8au46e1j1UmcHMQ6VN
+                    5qQNSSvS30L+RFTKFlKmJ64j1/1cAyaxqvMJVDjxSnmk7q2z+j3NCLlTUOQTdSpY
+                    WbRbbNiwcp5+aWR/CpCTkEvFAvYRHYPuDcok6XR8QJ6jeq54jrN490wA/5t64OXR
+                    9pRojKOTNvRMJEbVovgzBwiQGz3RF/AplLh4ezM0XFLCBD9HmTPUugO0CNqCuAYs
+                    cKMkPMJ7H4jjl3XqcMMCm5LS+G2ahzR/eEmQxdy4zQLMrKvJGuePwTK2hYsIMNBL
+                    eBVUPFr+4sjkfoBzw1Xi8ezrE5AYSReFjSxGTwIDAQABAoIBAD1PE1ZmBQtSt264
+                    //E+RHyhWAgRohV1Iv5tq1tMgqUUEpikWIR+6cb6Q1sM0TAZqyI6D6UUJ+asMHXW
+                    mueqXQd/OoqM1z1nj05q+wlMS+M/OWQPZzxZNw58h3YFx/dVRvQBrco0OOC0dvfs
+                    +8z51byLMLNLjmRb38keZgj2BtDZYf9NCCknlaQ6GRxucXH8xGchFzZNLfV8YxnB
+                    KsczwtZdHOAEFgzC5/JQKFIMZxaWOFjS43zU8qEQAL3+ERRx4iwQVGDlqtAKYKsM
+                    gCoJ9uxJcvQhxVtBs+D0v6mtE7hE8e04pYcy+lC8GL89kMS4oECo5LgcaSjjbISa
+                    G6EaSCkCgYEA/1vIrZgn03ll9iLtT13D7Bbxn/KN0v39fBrhpxoYuLPuoNQdrU9M
+                    heWlB17+niCBM4cjzGeCLFAPSKViIuI5eDxpvUD7Jlp9bR/clKpYBLg44ECD75+D
+                    k8qx4SnGZovTPj6Hbf5Zx5mkstAkKgink7V56xwUsLRHeZ5Y7mQJRc0CgYEA6upW
+                    QZ0HPg13fbfIflBxpc/2p4NP13wy/bE5f9S3hERCocIXKSXcyNHRnj/KzEJqULaP
+                    v9gIiVrbZBLipGxlAD8mfQItjuGcnrqWzEuD+nhDN5UwU2nxxb+iw6anwbR2xFhl
+                    OG4BVpB93ttaocrKmlAo9H2ylg0aDEQExYtQ4IsCgYEAoyJz1dL6vnMz3Eb77FQu
+                    skkGG/TM/hodMofJ2QMm//iTXlOkke+zJ2dKQqdBaqvBXrXa/N6znrOW0AY356k2
+                    pcWSl8FHsXzl3C0asi8RBBLc4wbUQuVZHbXEZeBWS3TQg1dXFcIEgSt6uHGYaPIW
+                    fJrXRIgv/6NsdhnfHozyD5ECgYAMW/fdy90trpeyzZCG1MSl7KMVfRseQzKLll9o
+                    ElD1bIH08Lk3OP68sg1NPh31USk2xeQaO8t3LoiMY1H5RJqrwKbNvOeYtNYAo+B7
+                    Lx3qd5lRu0+nk9NcjBCMKqB42H3HJr9skJ0RaNi2eOPzzy+Jnt4IvvQ+YMIWEx4N
+                    Jp9CsQKBgEnZLpoulcYCSZb7S5D+Ol+a4jAlbCC6PquzUYPKz0kIOleDJK0xTcP+
+                    YoH+UgKFylmRYU7H6FQlAVMs2yEjNDwj6TbPiSHonacQKPiCtgxXbrPFUEZi/pie
+                    ucg+OWotDedt/YqDXqsEtKenFgNAJwdvp12z9fe9l1R6w/5h09nb
+                    -----END RSA PRIVATE KEY-----
+              scope: GLOBAL
+              username: "ec2-user"
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          name: "admin"
+          password: "admin123"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  clouds:
+  - amazonEC2:
+      name: "ec2-agent-cloud"
+      noDelayProvisioning: true
+      region: "ap-southeast-1" # Change here
+      sshKeysCredentialsId: "ssh-key-for-jenkins-agent"
+      templates:
+      - ami: "ami-07dc7fbc73bffbeb5" # Change here
+        amiType:
+          unixData:
+            sshPort: "22"
+        associatePublicIp: false
+        connectBySSHProcess: false
+        connectionStrategy: PRIVATE_IP
+        deleteRootOnTermination: false
+        description: "AMI used to create Jenkins agent"
+        ebsEncryptRootVolume: DEFAULT
+        ebsOptimized: false
+        hostKeyVerificationStrategy: 'OFF'
+        iamInstanceProfile: "arn:aws:iam::008189915245:instance-profile/EC2JenkinsProfile" # Change here
+        idleTerminationMinutes: "30"
+        instanceCapStr: "1"
+        javaPath: "java"
+        labelString: "ec2-agent"
+        maxTotalUses: -1
+        metadataEndpointEnabled: true
+        metadataHopsLimit: 1
+        metadataSupported: true
+        metadataTokensRequired: false
+        minimumNumberOfInstances: 1
+        minimumNumberOfSpareInstances: 0
+        mode: EXCLUSIVE
+        monitoring: false
+        numExecutors: 2
+        remoteAdmin: "ec2-user"
+        remoteFS: "/home/ec2-user"
+        securityGroups: "jenkins-sg" # Change here
+        stopOnTerminate: false
+        subnetId: "subnet-011b9fff224a65e49" # Change here
+        t2Unlimited: false
+        tags:
+        - name: "Name"
+          value: "ec2-jenkins-agent"
+        tenancy: Default
+        type: T2Micro
+        useEphemeralDevices: false
+        userData: |-
+          #!/bin/bash
+
+          set -exo pipefail
+
+          # Install common dependencies
+          yum clean all
+          yum install -y nano git unzip wget java-17-openjdk
+
+          # Install aws-cli
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+          rm -rf awscliv2.zip aws
+
+          # Download packer
+          wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
+          unzip packer_1.10.2_linux_amd64.zip
+          which -a packer | xargs rm -rf
+          mv packer /usr/bin/packer
+          hash -r
+          rm packer_1.10.2_linux_amd64.zip
+
+          # Install docker
+          sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+          sudo yum install -y docker-ce docker-ce-cli containerd.io
+          usermod -aG docker ec2-user
+        zone: "ap-southeast-1a" # Change here
+      useInstanceProfileForCredentials: true
+security:
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+unclassified:
+  ansiColorBuildWrapper:
+    globalColorMapName: "xterm"
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube_token"
+      name: "SonarCloud Server"
+      serverUrl: "https://sonarcloud.io"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
+tool:
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  sonarRunnerInstallation:
+    installations:
+    - name: "sonar-scanner"
+      properties:
+      - installSource:
+          installers:
+          - sonarRunnerInstaller:
+              id: "5.0.1.3006"
+jobs:
+  - script: >
+      job('bootstrap') {
+        description('Bootstrap job created with Jenkins Configuration as Code + Job DSL')
+        triggers {
+          hudsonStartupTrigger {
+            quietPeriod("20")
+            runOnChoice("ON_CONNECT")
+            label("")
+            nodeParameterName("")
+          }
+        }
+        scm {
+          git {
+            branch('lab3')
+            remote {
+              url('https://github.com/painterhalver/sc_lab.git')
+            }
+            extensions {
+              cloneOptions {
+                depth(1)
+                shallow(true)
+                noTags(true)
+              }
+              wipeWorkspace()
+            }
+          }
+        }
+        steps {
+          dsl {
+            external('lab3/jenkins_jobs/HelloWorld.dsl')
+            external('lab3/jenkins_jobs/BuildBaseAMI.dsl')
+            external('lab3/jenkins_jobs/BuildAppAMI.dsl')
+            external('lab3/jenkins_jobs/PythonAppCI.dsl')
+            external('lab3/jenkins_jobs/PythonAppCD.dsl')
+          }
+        }
+        publishers {
+          wsCleanup()
+        }
+      }

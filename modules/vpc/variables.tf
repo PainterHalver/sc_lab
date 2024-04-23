@@ -38,3 +38,11 @@ variable "with_nat_instance" {
     instance_profile_name     = null
   }
 }
+
+variable "database_subnets" {
+  type = list(object({
+    cidr_block        = string
+    availability_zone = string
+  }))
+  default = []
+}
