@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'lab3', url: 'https://github.com/PainterHalver/sc_lab.git'
+                git branch: 'master', url: 'https://github.com/PainterHalver/sc_lab.git'
                 script {
                     env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                 }
