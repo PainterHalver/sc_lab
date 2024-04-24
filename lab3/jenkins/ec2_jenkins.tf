@@ -1,10 +1,10 @@
 resource "aws_instance" "jenkins" {
-  ami                  = data.aws_ami.jenkins.id
-  instance_type        = "t3.small"
-  key_name             = aws_key_pair.jenkins.key_name
-  iam_instance_profile = module.ec2_jenkins_profle.profile_name
-  subnet_id            = var.private_subnet_id
-  security_groups      = [aws_security_group.jenkins.id]
+  ami                    = data.aws_ami.jenkins.id
+  instance_type          = "t3.small"
+  key_name               = aws_key_pair.jenkins.key_name
+  iam_instance_profile   = module.ec2_jenkins_profle.profile_name
+  subnet_id              = var.private_subnet_id
+  vpc_security_group_ids = [aws_security_group.jenkins.id]
 
   root_block_device {
     delete_on_termination = true

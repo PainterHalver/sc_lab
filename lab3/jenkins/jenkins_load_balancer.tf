@@ -50,6 +50,16 @@ resource "aws_lb_target_group" "ec2_jenkins_http" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 
+  health_check {
+    path                = "/login"
+    protocol            = "HTTP"
+    port                = "8080"
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    timeout             = 10
+    interval            = 20
+  }
+
   tags = var.default_tags
 }
 
