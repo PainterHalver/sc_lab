@@ -1,12 +1,14 @@
 # Checklist
 
+#### Old Requirements
+
 🟩Use Terraform
 🟥Use Makefile
 🟩Setup Jenkins for CI/CD
 🟩Build AMI using packer
 🟩Build a BASE AMI that is used to build all other AMIs
 Whenever a new base AMI is released (built), other AMI builds are triggered automatically
-🟨Use lambda function to check source AMI and trigger Jenkins pipelines
+🟩Use lambda function to check source AMI and trigger Jenkins pipelines
 🟨Create EFS: as persistant data storage, store source code or app data permanently
 
 🟨App (3-tier model)
@@ -14,28 +16,30 @@ Flask API
 user-data: Auto mount EFS
 Run Docker Compose
 Use Boto3, pandas(export CSV)... to export non-compliance security groups (Webpage > Click a button > List URLs to download CSV files)
-🟨Store CSV lists to DB
+🟩Store CSV lists to DB
 App pipelines:
 
 - Build Docker image → ECR
-- 🟨 Use SonarQube to scan Docker image
-- 🟥 Deploy new app version
-- 🟥 Patching with new base AMI
+- 🟨 Use SonarQube to scan source code.
+- 🟨 Deploy new app version
+- 🟨 Patching with new base AMI
 
 🟩Tagging resources with required tags
 Group: CyberDevOps
 Environment: development
 
-🟨AWS Config:
+🟩AWS Config:
 Rule to check tag compliance
 Rule to check SG rule compliance
 🟨SNS: send monitoring alerts (CPU, memory, disk)
 🟨DNS (Route53)
-🟨ALB
-🟨ASG
-🟨RDS
+🟩ALB
+🟩ASG
+🟩RDS
 🟩S3 (CSV files)
 🟨Encrypted with KMS key
+
+#### New Requirements
 
 ### Notes
 
@@ -74,16 +78,19 @@ volumes:
 
 #### Some questions:
 
-- What exactly will EFS store?
-- Should I mount EFS directly to container using docker compose or mount it to EC2 instance?
-- What metrics/logs should CloudWatch monitor? And when to alert?
-- Can Jenkins be deployed in the default VPC?
-- When new code is pushed, do we build a new AMI and create new launch_template or just push code to the running instances?
-- Do we have to run a SonarQube server? Can we use free SonarCloud server instead?
-- Do we have to register a new domain in Route53?
-- What will be the use case of Makefile?
-- What AMIs aside from the app AMI should we build from the Base AMI?
-- Must ASG update have zero downtime?
+- [X] What exactly will EFS store? => Home dir for jumphost, Data dir for Jenkins, SonarQube
+- [X] Can Jenkins be deployed in the default VPC? => All Jenkins, App, SonarQube in 1 VPC
+- [X] When new code is pushed, how to update ASG? => Create a new launch_template + Instance Refresh / Use CodeDeploy.
+- [X] Do we have to register a new domain in Route53? => No, use private DNS and domain name for each host
+- [X] What will be the use case of Makefile? => Simplify command execution and automate repetitive tasks
+- [X] What AMIs aside from the app AMI should we build from the Base(golden) AMI? => App, Jenkins, Jumphost
+- [X] How should the terraform project structure be? => Divide the project into stacks. E.g. Run network stack and use its output for app and jenkins.
+- [ ] Since the Jenkins master cannot patch its own AMI, what machine will we use to patch it?
+
+- Jenkins patching can be run manually
+- All Jenkins, App, SonarQube need to be deployed in 1 VPC. Can use multiple terraform stacks to separate resources like App, Jenkins, Network.
+- Focus on patching Jenkins, App, and Jumphost. Don't need to patch NAT Instance, SonarQube
+- With multiple stacks/modules, you can take advantage of terraform's `-target` options.
 
 #### Mock latest AMI Route
 
@@ -172,4 +179,6 @@ This documents the progress and things I learned along the way.
 | Wed, Apr 17 | ✅Find a way to run Jenkins with master + agent setup                                                                                                                                         | - Add Jenkins Amazon EC2 plugin, config to auto spawn agent.<br />- Dump config to JCasC.                                                                                                                                                                                                                                                                                                                                                                                                                                            | - EC2 plugin requires correct AWS Key Pair format ("-----BEGIN RSA PRIVATE KEY-----")<br />`aws ec2 create-key-pair --key-name my-key-pair --key-type rsa --key-format pem --query "KeyMaterial" --output text > my-key-pair.pem`<br />- Generate public key from private key with `ssh-keygen -y [-f input_keyfile]`<br />- You can add label to nodes, and then specify label in job to run on which node.<br />- You can config EC2 so that there is always a number of instances standing by waiting for jobs.                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Fri, Apr 19 | ✅Write terraform for Python App infrastructure: ALB, ASG, RDS                                                                                                                                | - Create RDS instance with terraform.<br />- Create ALB, ASG with Launch Template.<br />- Write app user-data to auto clone github repo and run docker compose.                                                                                                                                                                                                                                                                                                                                                                      | - You cannot directly specify a subnet for RDS, instead create a `subnet group` first then assign to the RDS instance.<br />- You'll need at least two subnets in two different availability zones since RDS required this for Multi-AZ mainly.<br />- You need to do this even for Single-AZ deployments, just in case you want to convert them to Multi-AZ deployments at some point.<br />- [Docker compose env precedence](https://docs.docker.com/compose/environment-variables/envvars-precedence/), docker compose also reads from .env file.<br />- ALB also requires at least 2 subnets in 2 AZs.<br />- `security_groups` argument of resource `aws_instance` is for default VPC only, use `vpc_security_group_ids` instead. The first one will force replacement every terraform apply.<br />- Default SQLAlchemy engine may not work with mysql. Use `pymysql` and use URI like `mysql+pymysql://user:pass@db.com:3306/db_name.` |
 | Mon, Apr 22 | ✅ ASG + ELB Health checks<br />✅ Rolling Update ASG with new launch template (new AMI/Code)<br />✅ Update app to use boto3 SSM instead of injecting directly from terraform to user-data. | - Fix route table terraform reapply issues.<br />- Add AWS managed `required-tags` rule to check resources tags.<br />- Update SG compliance check method: Get all rules for SG, <br />then call API for each rule instead of calling API for each SG like currently implemented.<br />- Add HTTP health check route in python app, use ELB as health check for ASG.<br />- Rolling update ASG using Instance refresh with terraform.<br />- Add BuildAppAMI jenkins job. Trigger when BuildBaseAMI job completed successfully. | - You can only use either inline route or standalone `aws_route` resource, using both will cause them to override and conflict.<br />- Don't need to add resource for the default local route.<br />- Use terraform lifecycle for SSM Parameter to not reapply the value if it changes.<br />- ALB Target Group has HTTP health check, and ASG can also use this ELB health check to replace unhealthy instances instead of the default EC2 health check.<br />- Set ASG health check grace period to prevent ASG from terminating an instance on launch if the ELB health check fails.                                                                                                                                                                                                                                                                                                                                                              |
-| Tue, Apr 23 | ✅ Jenkins job to deploy/apply new app AMI/Code version.<br />✅ Show instance-id in frontend to see which instance is receiving the frontend request                                         | - Add PythonAppCD job: Plan and apply terraform to update auto scaling group launch template.<br />- Optimize Dockerfile: Combine RUN steps, add `.git`, `node_modules`,.. to .dockerignore.<br />- Show instance-id in frontend: Change start command in Dockerfile to a custom script, check if machine is EC2,<br />then change INSTANCE_ID placeholder to the real instance id.                                                                                                                                              | - New code pushed to GitHub -> Jenkins get the latest commit hash -> Apply to terraform launch_template tag to check if different -> Update launch_template version                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Tue, Apr 23 | ✅ Jenkins job to deploy/apply new app AMI/Code version.<br />✅ Show instance-id in frontend to see which instance is receiving the frontend request                                         | - Add PythonAppCD job: Plan and apply terraform to update auto scaling group launch template.<br />- Optimize Dockerfile: Combine RUN steps, add `.git`, `node_modules`,.. to .dockerignore.<br />- Show instance-id in frontend: Change start command in Dockerfile to a custom script, check if machine is EC2,<br />then change INSTANCE_ID placeholder to the real instance id.<br />- Refactor resource names to follow conventions.                                                                                        | - New code pushed to GitHub -> Jenkins get the latest commit hash -> Apply to terraform launch_template tag to check if different -> Update launch_template version                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|             | Lab 3 requirements changed.                                                                                                                                                                   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Wed, Apr 24 | ✅ See the changes in lab3's requirement.<br />✅ Write down questions if have any.                                                                                                          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
