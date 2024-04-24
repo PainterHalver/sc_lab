@@ -2,10 +2,6 @@
 #   value = aws_efs_file_system.efs_for_app.dns_name
 # }
 
-# output "efs_mount_target_ip_address" {
-#   value = aws_efs_mount_target.efs_mount_target.ip_address
-# }
-
 # resource "aws_efs_file_system" "efs_for_app" {
 #   performance_mode       = "generalPurpose"
 #   availability_zone_name = var.aws_availability_zone

@@ -6,6 +6,10 @@ output "vpc_id" {
   value = module.vpc_with_nat_instance.vpc_id
 }
 
+output "vpc_cidr" {
+  value = module.vpc_with_nat_instance.vpc_cidr
+}
+
 output "public_subnet_id" {
   description = "The main public subnet ID"
   value       = module.vpc_with_nat_instance.public_subnet_id
