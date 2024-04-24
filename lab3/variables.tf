@@ -28,3 +28,9 @@ variable "default_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "app_git_commit_hash" {
+  description = "The hash of the latest git commit, used to update if the ASG launch template"
+  type        = string
+  default     = "random_hash"
+}

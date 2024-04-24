@@ -64,7 +64,6 @@ resource "aws_security_group" "jenkins" {
 module "ec2_jenkins_profle" {
   source = "../../modules/ec2_profile"
 
-  aws_region   = var.aws_region
   default_tags = var.default_tags
 
   profile_name     = "EC2JenkinsProfile"
@@ -151,14 +150,6 @@ module "ec2_jenkins_profle" {
         "iam:ListInstanceProfilesForRole",
         "iam:PassRole",
         "ec2:GetPasswordData"
-      ],
-      effect   = "Allow",
-      resource = "*"
-    },
-    {
-      name = "EC2JenkinsOtherPoliciesForTerraform"
-      action = [
-        "config:*",
       ],
       effect   = "Allow",
       resource = "*"

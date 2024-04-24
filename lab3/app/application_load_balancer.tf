@@ -1,5 +1,5 @@
-resource "aws_lb" "jenkins" {
-  name               = "jenkins-alb"
+resource "aws_lb" "app" {
+  name               = "app-alb"
   internal           = false
   load_balancer_type = "application"
   subnets            = [var.public_subnet_id, var.other_public_subnet_id]
@@ -11,7 +11,7 @@ resource "aws_lb" "jenkins" {
 }
 
 resource "aws_security_group" "alb" {
-  name   = "jenkins-alb-sg"
+  name   = "app-alb-sg"
   vpc_id = var.vpc_id
 
   ingress {
@@ -32,39 +32,35 @@ resource "aws_security_group" "alb" {
 }
 
 // HTTP LISTENER
-resource "aws_lb_listener" "jenkins" {
-  load_balancer_arn = aws_lb.jenkins.arn
+resource "aws_lb_listener" "app" {
+  load_balancer_arn = aws_lb.app.arn
   port              = 80
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.ec2_jenkins_http.arn
+    target_group_arn = aws_lb_target_group.ec2_app_http.arn
   }
 
   tags = var.default_tags
 }
 
-resource "aws_lb_target_group" "ec2_jenkins_http" {
-  name     = "ec2-jenkins-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+resource "aws_lb_target_group" "ec2_app_http" {
+  name                 = "ec2-app-http-tg"
+  port                 = 80
+  protocol             = "HTTP"
+  vpc_id               = var.vpc_id
+  deregistration_delay = 30
 
   health_check {
-    path                = "/login"
-    protocol            = "HTTP"
-    port                = "8080"
+    enabled             = true
     healthy_threshold   = 3
     unhealthy_threshold = 3
-    timeout             = 10
-    interval            = 20
+    interval            = 10
+    path                = "/health"
+    port                = "80"
+    protocol            = "HTTP"
+    timeout             = 3
   }
 
   tags = var.default_tags
-}
-
-resource "aws_lb_target_group_attachment" "jenkins" {
-  target_group_arn = aws_lb_target_group.ec2_jenkins_http.arn
-  target_id        = aws_instance.jenkins.id
-  port             = 8080
 }

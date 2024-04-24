@@ -1,7 +1,3 @@
-variable "aws_region" {
-  type = string
-}
-
 variable "default_tags" {
   type     = map(string)
   nullable = true
