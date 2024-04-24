@@ -8,11 +8,6 @@ variable "aws_availability_zone" {
   nullable    = false
 }
 
-variable "aws_availability_zone_2" {
-  description = "The AZ to deploy the second private subnet in, this is needed for RDS and should be different from the first AZ"
-  nullable    = false
-}
-
 variable "instance_type" {
   description = "The general type of instance to launch"
   default     = "t2.micro"

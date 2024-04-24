@@ -1,24 +1,8 @@
-# module "vpc" {
-#   source              = "../modules/vpc"
-#   aws_region          = var.aws_region
-#   vpc_cidr            = "10.100.0.0/16"
-#   public_subnet_cidr  = "10.100.0.0/24"
-#   private_subnet_cidr = "10.100.1.0/24"
-#   subnet_az           = var.aws_availability_zone
-# }
+module "vpc" {
+  source                  = "./vpc"
+  aws_availability_zone   = var.aws_availability_zone
+  aws_availability_zone_2 = var.aws_availability_zone_2
+  ssh_pubkey_path         = var.ssh_pubkey_path
 
-resource "aws_default_subnet" "az1" {
-  availability_zone = var.aws_availability_zone
-}
-
-resource "aws_key_pair" "jenkins" {
-  key_name   = "ssh-pubkey-jenkins"
-  public_key = file(var.ssh_pubkey_path)
-
-  tags = var.default_tags
-}
-
-resource "aws_key_pair" "jenkins_agent" {
-  key_name   = "jenkins-agent-key"
-  public_key = file("${path.module}/misc/jenkins_agent.pem.pub")
+  default_tags = var.default_tags
 }
