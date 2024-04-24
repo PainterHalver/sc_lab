@@ -1,14 +1,3 @@
-#!/bin/bash
-
-set -exo pipefail
-
-mkdir -p /var/lib/jenkins/.ssh
-cat >> /var/lib/jenkins/.ssh/id_rsa.pub <<EOF
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCcjv0B6NjewjBZszn1fatY+UNcB7Ln4g2s3R+NoMH6Y+eprLSXlIyZaFnYh3b/pejPPz9g5YyYI6f+3Q5YCQ9FhSgkxwP0H22zOcKhqAfZW9RoVOtHBS5Pe7DCxtzlNRpmkdQtDkJ5ooWnfHAsofN140YZXSEHJqwo+xOqPzsHen/cm98Fmx3QSbcdqIobahF/WiuiYv45RpgORnEQKxlhz/Wb2TGsMGVtNbcIZYG2UPARKywYpbrbgezoJSKrkc3elHQ7NJahwLlppuT9f6ZxQxstBq5itFgydgnAzL/fCT3M3nA6hDH6fnzWGcGKHuHPue2reFVgw0UswktzLQp5NBuwa7G1lH+PyHImLX1B/yiRflF5YZudrmOACyxExhgXBFrY60waCi7q2xaCtmqL/YCYVkH7pDtjcTTHiMp0UXWq5/j7Yv5J67UpDGzrUb16Sb1Fja5bdnjrJrq64r3QJSJxVy+974v0U5fR90iamCA9vmYaY7DV66ILd/OSBmk= root@server-instance
-EOF
-
-# Create Jenkins configuration as code file
-cat >> /var/lib/jenkins/casc.yaml <<EOF
 credentials:
   system:
     domainCredentials:
@@ -18,7 +7,7 @@ credentials:
               id: "sonarqube_token"
               secret: "1144a76b7bb87021f2054c47396e4eb0b349c7fa"
               description: "SonarQube Token"
-          - basicSSHUserPrivateKey: # Change here
+          - basicSSHUserPrivateKey:
               description: "SSH Key Jenkins Master used to connect to Jenkins agent"
               id: "ssh-key-for-jenkins-agent"
               privateKeySource:
@@ -69,10 +58,10 @@ jenkins:
   - amazonEC2:
       name: "ec2-agent-cloud"
       noDelayProvisioning: true
-      region: "${agent_region}" # Change here
+      region: "ap-southeast-1" # Change here
       sshKeysCredentialsId: "ssh-key-for-jenkins-agent"
       templates:
-      - ami: "${agent_ami_id}" # Change here
+      - ami: "ami-07dc7fbc73bffbeb5" # Change here
         amiType:
           unixData:
             sshPort: "22"
@@ -84,7 +73,7 @@ jenkins:
         ebsEncryptRootVolume: DEFAULT
         ebsOptimized: false
         hostKeyVerificationStrategy: 'OFF'
-        iamInstanceProfile: "${agent_instance_profile_arn}" # Change here
+        iamInstanceProfile: "arn:aws:iam::008189915245:instance-profile/EC2JenkinsProfile" # Change here
         idleTerminationMinutes: "30"
         instanceCapStr: "1"
         javaPath: "java"
@@ -94,16 +83,16 @@ jenkins:
         metadataHopsLimit: 1
         metadataSupported: true
         metadataTokensRequired: false
-        minimumNumberOfInstances: 0
+        minimumNumberOfInstances: 1
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
         monitoring: false
         numExecutors: 2
         remoteAdmin: "ec2-user"
         remoteFS: "/home/ec2-user"
-        securityGroups: "${agent_sg_name}" # Change here
+        securityGroups: "jenkins-sg" # Change here
         stopOnTerminate: false
-        subnetId: "${agent_subnet_id}" # Change here
+        subnetId: "subnet-011b9fff224a65e49" # Change here
         t2Unlimited: false
         tags:
         - name: "Name"
@@ -138,8 +127,7 @@ jenkins:
           sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
           sudo yum install -y docker-ce docker-ce-cli containerd.io
           usermod -aG docker ec2-user
-          systemctl start docker
-        zone: "${agent_az}" # Change here
+        zone: "ap-southeast-1a" # Change here
       useInstanceProfileForCredentials: true
 security:
   globalJobDslSecurityConfiguration:
@@ -202,14 +190,10 @@ jobs:
             external('lab3/resources/jenkins_jobs/BuildBaseAMI.dsl')
             external('lab3/resources/jenkins_jobs/BuildAppAMI.dsl')
             external('lab3/resources/jenkins_jobs/PythonAppCI.dsl')
-            external('lab3/resources/jenkins_jobs/PythonAppCD.dsl')        
+            external('lab3/resources/jenkins_jobs/PythonAppCD.dsl')
           }
         }
         publishers {
           wsCleanup()
         }
       }
-EOF
-
-# Restart Jenkins
-systemctl restart jenkins
