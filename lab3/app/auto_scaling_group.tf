@@ -108,7 +108,9 @@ module "app_instance_profile" {
   ]
 
   managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess",
+    "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   ]
 }
 
