@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -exo pipefail
+
+yum install -y nfs-utils wget unzip java-17-openjdk git
+
+# Mount the EFS volume
+mkdir /sonarqube
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
+
+# Install AWS CLI
+# Install aws-cli
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+rm -rf awscliv2.zip aws
+
+SONARQUBE_HOME=/opt/sonarqube
+SONARQUBE_DATA=/data/sonarqube/data
+SONARQUBE_USER=sonar
+SONARQUBE_GROUP=sonar
+
+# # Install PostgreSQL and change the data directory
+# POSTGRES_DATA=/data/sonarqube/postgres
+# yum install -y postgresql-server postgresql
+# postgresql-setup initdb
+
+# # Copy the data directory to the EFS volume if it's not already there
+# if [ ! -d $POSTGRES_DATA ]; then
+#     mkdir -p $POSTGRES_DATA
+#     cp -r /var/lib/pgsql/data/* $POSTGRES_DATA
+# fi
+
+# # Append the data directory in the PostgreSQL configuration
+# cat <<EOF >> /var/lib/pgsql/data/postgresql.conf
+# data_directory = '$POSTGRES_DATA'
+# EOF
+
+# # Do the same thing with service file
+# mkdir -p /usr/lib/systemd/system/postgresql.service.d
+# cat <<EOF > /usr/lib/systemd/system/postgresql.service.d/overrides.conf
+# [Service]
+# Environment=PGDATA=$POSTGRES_DATA
+# EOF
+
+# chown -R postgres:postgres $POSTGRES_DATA
+# chmod 700 $POSTGRES_DATA
+# systemctl daemon-reload
+# systemctl enable postgresql --now
+
+# Setup Sonarqube
+if ! grep -q $SONARQUBE_GROUP /etc/group; then
+    groupadd -g 2000 $SONARQUBE_GROUP
+fi
+
+if ! grep -q $SONARQUBE_USER /etc/passwd; then
+    useradd -u 2000 -g 2000 -s /bin/false -d $SONARQUBE_HOME -c "SonarQube user" $SONARQUBE_USER
+fi
+
+mkdir -p $SONARQUBE_HOME
+mkdir -p $SONARQUBE_DATA
+
+# Download and install SonarQube
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.5.0.89998.zip
+unzip sonarqube-10.5.0.89998.zip
+rm -rf sonarqube-10.5.0.89998.zip
+mv sonarqube-10.5.0.89998/* $SONARQUBE_HOME
+
+cat <<EOF > $SONARQUBE_HOME/conf/sonar.properties
+#sonar.jdbc.username=sonar
+#sonar.jdbc.password=sonar
+#sonar.jdbc.url=jdbc:postgresql://localhost/sonar
+sonar.web.javaOpts=-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError
+sonar.web.host=0.0.0.0
+sonar.web.port=9000
+sonar.ce.javaOpts=-Xmx512m -Xms128m -XX:+HeapDumpOnOutOfMemoryError
+sonar.search.javaOpts=-Xmx512m -Xms512m -XX:MaxDirectMemorySize=256m -XX:+HeapDumpOnOutOfMemoryError
+sonar.path.data=$SONARQUBE_DATA
+EOF
+
+# Download default backup if $SONARQUBE_DATA is empty
+if [ ! "$(ls -A $SONARQUBE_DATA)" ]; then
+    /usr/local/bin/aws s3 cp s3://nazii/sonarqube_data_26042024.tar.gz /tmp/sonarqube-backup.tar.gz
+    tar -xzf /tmp/sonarqube-backup.tar.gz -C $SONARQUBE_DATA
+    rm -rf /tmp/sonarqube-backup.tar.gz
+fi
+
+chown -R $SONARQUBE_USER:$SONARQUBE_GROUP $SONARQUBE_HOME
+chown -R $SONARQUBE_USER:$SONARQUBE_GROUP $SONARQUBE_DATA
+
+# Start SonarQube
+sudo -u $SONARQUBE_USER $SONARQUBE_HOME/bin/linux-x86-64/sonar.sh start

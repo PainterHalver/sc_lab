@@ -38,3 +38,18 @@ resource "aws_route_table_association" "public_2" {
   subnet_id      = aws_subnet.public_2.id
   route_table_id = module.vpc_with_nat_instance.public_subnet_route_table_id
 }
+
+// Add a VPC Gateway Endpoint for S3
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = module.vpc_with_nat_instance.vpc_id
+  vpc_endpoint_type = "Gateway"
+
+  service_name = "com.amazonaws.${var.aws_region}.s3"
+
+  route_table_ids = [
+    module.vpc_with_nat_instance.public_subnet_route_table_id,
+    module.vpc_with_nat_instance.private_subnet_route_table_id
+  ]
+
+  tags = var.default_tags
+}

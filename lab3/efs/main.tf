@@ -1,20 +1,28 @@
-resource "aws_efs_file_system" "efs_for_app" {
+resource "aws_efs_file_system" "this" {
   performance_mode       = "generalPurpose"
   availability_zone_name = var.aws_availability_zone
   throughput_mode        = "elastic"
 
   tags = merge(var.default_tags, {
-    Name = "efs-for-app"
+    Name = "efs-jenkins-jumphost-sonarqube"
   })
 }
 
-resource "aws_efs_mount_target" "efs_mount_target" {
-  file_system_id  = aws_efs_file_system.efs_for_app.id
-  subnet_id       = var.subnet_id
-  security_groups = [aws_security_group.efs_sg.id]
+resource "aws_efs_backup_policy" "this" {
+  file_system_id = aws_efs_file_system.this.id
+
+  backup_policy {
+    status = "DISABLED"
+  }
 }
 
-resource "aws_security_group" "efs_sg" {
+resource "aws_efs_mount_target" "this" {
+  file_system_id  = aws_efs_file_system.this.id
+  subnet_id       = var.subnet_id
+  security_groups = [aws_security_group.this.id]
+}
+
+resource "aws_security_group" "this" {
   name   = "efs-sg"
   vpc_id = var.vpc_id
 

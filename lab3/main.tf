@@ -1,5 +1,6 @@
 module "vpc" {
   source                  = "./vpc"
+  aws_region              = var.aws_region
   aws_availability_zone   = var.aws_availability_zone
   aws_availability_zone_2 = var.aws_availability_zone_2
   ssh_pubkey_path         = var.ssh_pubkey_path
@@ -18,19 +19,32 @@ module "efs" {
   depends_on   = [module.vpc]
 }
 
-# module "jenkins" {
-#   source                 = "./jenkins"
-#   aws_region             = var.aws_region
-#   aws_availability_zone  = var.aws_availability_zone
-#   ssh_pubkey_path        = var.ssh_pubkey_path
-#   vpc_id                 = module.vpc.vpc_id
-#   public_subnet_id       = module.vpc.public_subnet_id
-#   other_public_subnet_id = module.vpc.other_public_subnet_id
-#   private_subnet_id      = module.vpc.private_subnet_id
+module "sonarqube" {
+  source                 = "./sonarqube"
+  ssh_pubkey_path        = var.ssh_pubkey_path
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_id       = module.vpc.public_subnet_id
+  other_public_subnet_id = module.vpc.other_public_subnet_id
+  private_subnet_id      = module.vpc.private_subnet_id
+  efs_dns_name           = module.efs.dns_name
 
-#   default_tags = var.default_tags
-#   depends_on = [module.vpc]
-# }
+  default_tags = var.default_tags
+  depends_on   = [module.vpc, module.efs]
+}
+
+module "jenkins" {
+  source                 = "./jenkins"
+  aws_region             = var.aws_region
+  aws_availability_zone  = var.aws_availability_zone
+  ssh_pubkey_path        = var.ssh_pubkey_path
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_id       = module.vpc.public_subnet_id
+  other_public_subnet_id = module.vpc.other_public_subnet_id
+  private_subnet_id      = module.vpc.private_subnet_id
+
+  default_tags = var.default_tags
+  depends_on   = [module.vpc]
+}
 
 module "app" {
   source                 = "./app"

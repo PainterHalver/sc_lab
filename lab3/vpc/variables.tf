@@ -1,3 +1,8 @@
+variable "aws_region" {
+  description = "The AWS region to deploy resources"
+  type        = string
+}
+
 variable "aws_availability_zone" {
   description = "The availability zone to deploy resources"
   nullable    = false
