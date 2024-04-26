@@ -38,3 +38,9 @@ variable "ssh_pubkey_path" {
   description = "The path to the public key used for Jenkins SSH access"
   type        = string
 }
+
+variable "admin_password" {
+  description = "The password for the Jenkins admin user"
+  type        = string
+  default     = "admin123"
+}

@@ -33,3 +33,7 @@ output "database_subnet_ids" {
 output "public_subnet_route_table_id" {
   value = aws_route_table.public.id
 }
+
+output "private_subnet_route_table_id" {
+  value = aws_route_table.private.id
+}

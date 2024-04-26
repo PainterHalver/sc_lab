@@ -12,6 +12,7 @@ resource "aws_instance" "jenkins" {
   }
 
   user_data = templatefile("${path.module}/user-data/jenkins_master.sh.tftpl", {
+    admin_password             = var.admin_password
     agent_region               = var.aws_region
     agent_az                   = var.aws_availability_zone
     agent_sg_name              = aws_security_group.jenkins.name
@@ -30,6 +31,11 @@ resource "aws_key_pair" "jenkins" {
   public_key = file(var.ssh_pubkey_path)
 
   tags = var.default_tags
+}
+
+resource "aws_key_pair" "jenkins_agent" {
+  key_name   = "jenkins-agent-key"
+  public_key = file("${path.module}/../resources/misc/jenkins_agent.pem.pub")
 }
 
 resource "aws_security_group" "jenkins" {
