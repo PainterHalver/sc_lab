@@ -5,6 +5,13 @@ set -exo pipefail
 # Install dependencies
 yum install -y wget git unzip yum-utils nfs-utils
 
+# Enable 2GB of swap file
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+
 # Download packer
 wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
 unzip packer_1.10.2_linux_amd64.zip

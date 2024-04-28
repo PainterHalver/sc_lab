@@ -15,6 +15,13 @@ unzip awscliv2.zip
 ./aws/install
 rm -rf awscliv2.zip aws
 
+# Enable 2GB of swap file
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+
 SONARQUBE_HOME=/opt/sonarqube
 SONARQUBE_DATA=/data/sonarqube/data
 SONARQUBE_USER=sonar
@@ -80,7 +87,7 @@ EOF
 
 # Download default backup if $SONARQUBE_DATA is empty
 if [ ! "$(ls -A $SONARQUBE_DATA)" ]; then
-    /usr/local/bin/aws s3 cp s3://nazii/sonarqube_data_26042024.tar.gz /tmp/sonarqube-backup.tar.gz
+    /usr/local/bin/aws s3 cp s3://nazii/sonarqube_data_28042024.tar.gz /tmp/sonarqube-backup.tar.gz
     tar -xzf /tmp/sonarqube-backup.tar.gz -C $SONARQUBE_DATA
     rm -rf /tmp/sonarqube-backup.tar.gz
 fi

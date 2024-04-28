@@ -92,6 +92,8 @@ volumes:
 - Focus on patching Jenkins, App, and Jumphost. Don't need to patch NAT Instance, SonarQube
 - With multiple stacks/modules, you can take advantage of terraform's `-target` options.
 
+### Old Requirements Notes
+
 #### Mock latest AMI Route
 
 - Route: `/images/aws/centos/latest` returns text/plain the ami-id of the latest HIP AMI.
@@ -149,6 +151,35 @@ volumes:
 
 ![build-base-ami-flow](../diagrams/lab-3-build-base-ami.png)
 
+### New Requirement Notes
+
+#### About EFS
+
+EFS has a free tier of 5GB for Standard storage type.
+
+But throughput can cost alot:
+
+- Elastic throughput: Cost per GB, $0.04 read, $0.07 write
+- Provisioned throughput: $7.20 per 1 MB/s per month in Sydney/Singapore region.
+- Bursting throughput: Credit based (meaning free?), but only 50KB/s per 1GB data size, which is slow. See `BurstCreditBalance` in CloudWatch Metrics. <== Use this
+
+Every new EFS starts with 2.1TiB of burst credits, confirmed by using CloudWatch:
+
+2308974417330 bytes / 1024 / 1024 / 1024 / 1024 is exactly 2.1TB
+
+![efs_burst_credit_cloudwatch](../diagrams/efs_burst_credit_cloudwatch.png)
+
+Elastic throughput bill for one day setting up Sonarqube server (around 10 times create/destroy data dir): 😥
+
+![efs_bill_elastic](../diagrams/efs_bill_elastic.png)
+
+**Conclusion:** Use Standard EFS with Bursting throughput mode, turn automatic backup off, mount target in the same AZ.
+
+Reference:
+
+- Throughput modes: https://docs.aws.amazon.com/efs/latest/ug/performance.html#throughput-modes
+- Pricing (Elastic and Provisioned): https://aws.amazon.com/efs/pricing/
+
 #### Other Ideas?
 
 - [X] Write a script to delete all AMIs.
@@ -183,4 +214,4 @@ This documents the progress and things I learned along the way.
 |             | Lab 3 requirements changed.                                                                                                                                                                   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | Wed, Apr 24 | ✅ See the changes in lab3's requirement.<br />✅ Write down questions if have any.                                                                                                          | - Create a new project folder for lab 3, use a main file at root folder and modules in subfolders.<br />- Create a main VPC for infrastructure.<br />- Create ALB + Jenkins setup, reusing most of the code to initialize Jenkins.<br />- Migrate App ASG+ALB to new lab module.<br />- Create EFS module with mount target.                                                                                                                                                                                                        | - With multiple stacks/modules, you can take advantage of terraform's `-target` options to only apply/destroy certain resources/modules.<br />- Can generate a random password for RDS using terraform `random_password` resource.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | Thu, Apr 25 | ✅ Rewrite the app to check resources and evaluate rules using Python instead of Config.                                                                                                      | - Add a route to scan for resources and check them against custom rules.<br />- Update frontend to work with new API.                                                                                                                                                                                                                                                                                                                                                                                                                | - Flow: Get all resources (EC2, RDS, S3, EBS, SG), run them through each associated rule, add a description for every unmatched rule.<br />- Add ExpiresIn parameter for generating presigned S3 URL.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| Fri, Apr 26 | ✅ Automate creation of the SonarQube server.                                                                                                                                                | - Write user-data to install SonarQube<br />- Mount EFS volume, restore default seed data from S3.<br />- Load sonarqube_token from SSM with /run/secrets/secrets.properties file instead of passing in yaml config directly.                                                                                                                                                                                                                                                                                                       | - SonarQube data is stored at `$SONAR_HOME/data`<br />- Can run SonarQube for development with embedded H2 database, you'll see a warning message in the logs, and SonarQube will not start in production mode.<br />- To escape \${} in terraform templatefile, use \$\${}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Fri, Apr 26 | ✅ Automate creation of the SonarQube server.                                                                                                                                                | - Write user-data to install SonarQube<br />- Mount EFS volume, restore default seed data from S3.<br />- Load sonarqube_token from SSM with /run/secrets/secrets.properties file instead of passing in yaml config directly.<br />- Create a VPC Gateway Endpoint for S3.                                                                                                                                                                                                                                                          | - SonarQube data is stored at `$SONAR_HOME/data`<br />- Can run SonarQube for development with embedded H2 database, you'll see a warning message in the logs, and SonarQube will not start in production mode.<br />- To escape \${} in terraform templatefile, use \$\${}<br />- VPC Gateway Endpoint helps reduce internet traffic to S3, and it's free.<br />- VPC Gateway Endpoint works by creating a route in the route tables, pointing a `prefix list` (containing S3's IP ranges) to the gateway endpoint.                                                                                                                                                                                                                                                                                                                                                                                                                                |

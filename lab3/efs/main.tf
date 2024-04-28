@@ -1,7 +1,7 @@
 resource "aws_efs_file_system" "this" {
   performance_mode       = "generalPurpose"
   availability_zone_name = var.aws_availability_zone
-  throughput_mode        = "elastic"
+  throughput_mode        = "bursting"
 
   tags = merge(var.default_tags, {
     Name = "efs-jenkins-jumphost-sonarqube"

@@ -1,6 +1,6 @@
 resource "aws_instance" "sonarqube" {
   ami                    = data.aws_ami.centos_9_stream.id
-  instance_type          = "t3a.medium"
+  instance_type          = "t3.small"
   iam_instance_profile   = module.ec2_sonarqube_profle.profile_name
   key_name               = aws_key_pair.sonarqube.key_name
   subnet_id              = var.private_subnet_id
