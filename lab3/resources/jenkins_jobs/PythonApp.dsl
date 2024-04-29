@@ -1,6 +1,10 @@
 #!/usr/bin/env groovy
 
-pipelineJob('python-app-ci') {
+folder('PythonApp') {
+    description('Python App CI/CD')
+}
+
+pipelineJob('PythonApp/python-app-ci') {
     displayName('PythonAppCI')
     description('Run CI everytime a commit is pushed to the App repo')
     properties {
@@ -16,6 +20,17 @@ pipelineJob('python-app-ci') {
     definition {
         cps {
             script(readFileFromWorkspace('lab3/resources/jenkins_jobs/PythonAppCI.pipeline.groovy'))
+            sandbox()
+        }
+    }
+}
+
+pipelineJob('PythonApp/python-app-cd') {
+    displayName('PythonAppCD')
+    description('Deploy/Apply new version of the app infrastructure')
+    definition {
+        cps {
+            script(readFileFromWorkspace('lab3/resources/jenkins_jobs/PythonAppCD.pipeline.groovy'))
             sandbox()
         }
     }

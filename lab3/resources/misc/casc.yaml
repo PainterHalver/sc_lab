@@ -187,10 +187,8 @@ jobs:
         steps {
           dsl {
             external('lab3/resources/jenkins_jobs/HelloWorld.dsl')
-            external('lab3/resources/jenkins_jobs/BuildBaseAMI.dsl')
-            external('lab3/resources/jenkins_jobs/BuildAppAMI.dsl')
-            external('lab3/resources/jenkins_jobs/PythonAppCI.dsl')
-            external('lab3/resources/jenkins_jobs/PythonAppCD.dsl')
+            external('lab3/resources/jenkins_jobs/Build.dsl')
+            external('lab3/resources/jenkins_jobs/PythonApp.dsl')
           }
         }
         publishers {
