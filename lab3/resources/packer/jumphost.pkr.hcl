@@ -13,7 +13,7 @@ locals {
 }
 
 source "amazon-ebs" "base" {
-  ami_name      = "CentOS-9-App-${local.timestamp}"
+  ami_name      = "CentOS-9-Jumphost-${local.timestamp}"
   instance_type = "t2.micro"
   region        = local.region
   ssh_username  = "ec2-user"
@@ -28,13 +28,13 @@ source "amazon-ebs" "base" {
 }
 
 build {
-  name = "build-app-ami"
+  name = "build-jumphost-ami"
   sources = [
     "source.amazon-ebs.base"
   ]
 
   provisioner "shell" {
     execute_command = "sudo -E -S sh '{{ .Path }}'"
-    inline = [templatefile("./scripts/app.sh", {  })]
+    inline = [templatefile("./scripts/jumphost.sh", {  })]
   }
 }

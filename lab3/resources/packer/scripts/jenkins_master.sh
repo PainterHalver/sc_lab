@@ -58,13 +58,15 @@ Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard
 EOF
 
 systemctl daemon-reload
-systemctl enable jenkins
+systemctl disable jenkins
 systemctl start jenkins
 
 # Download and install Jenkins plugins
 wget -O /opt/jenkins-cli.jar http://localhost:8080/jnlpJars/jenkins-cli.jar
 
 # Run install-plugin command, retry up to 10 times
+echo "Wait a while for Jenkins to warm up..."
+sleep 20
 for i in {1..10}; do
   java -jar /opt/jenkins-cli.jar -s http://localhost:8080/ install-plugin ant:latest antisamy-markup-formatter:latest build-timeout:latest cloudbees-folder:latest credentials-binding:latest email-ext:latest git:latest github-branch-source:latest gradle:latest ldap:latest mailer:latest matrix-auth:latest pam-auth:latest pipeline-github-lib:latest pipeline-stage-view:latest ssh-slaves:latest timestamper:latest workflow-aggregator:latest ws-cleanup:latest configuration-as-code:latest job-dsl:latest startup-trigger-plugin:latest ansicolor:latest build-token-root:latest sonar:latest ec2:latest && break
   sleep 5
@@ -73,4 +75,4 @@ for i in {1..10}; do
   fi
 done
 
-echo "Jenkins AMI updated at $(date)" > /opt/jenkins.txt
+echo "Jenkins AMI built at $(date)" > /opt/jenkins.txt

@@ -2,9 +2,9 @@
 
 set -exo pipefail
 
-function init_jenkins_home () {
+function reload_jenkins_config () {
   # Create Jenkins configuration as code file
-  cat >> $JENKINS_HOME/casc.yaml <<EOF
+  cat > $JENKINS_HOME/casc.yaml <<EOF
 credentials:
   system:
     domainCredentials:
@@ -51,6 +51,7 @@ credentials:
               username: "ec2-user"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  numExecutors: 3
   securityRealm:
     local:
       allowsSignup: false
@@ -204,8 +205,6 @@ jobs:
         }
       }
 EOF
-  # Migrate Jenkins home to EFS
-  cp -rf $JENKINS_OLD_HOME/* $JENKINS_HOME
 }
 
 # Config Jenkins to use EFS as home directory
@@ -241,9 +240,13 @@ EOF
 systemctl stop jenkins
 systemctl daemon-reload
 
+# Reload Jenkins configuration as code
+reload_jenkins_config
+
 # Init Jenkins home if it's empty
 if [ ! "$(ls -A $JENKINS_HOME)" ]; then
-  init_jenkins_home
+  # Migrate Jenkins home to EFS
+  cp -rf $JENKINS_OLD_HOME/* $JENKINS_HOME
 fi
 
 # Change Jenkins user's home directory

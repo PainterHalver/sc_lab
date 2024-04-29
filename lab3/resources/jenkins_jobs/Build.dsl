@@ -31,3 +31,31 @@ pipelineJob('Build/BuildAppAMI') {
         }
     }
 }
+
+pipelineJob('Build/BuildJumphostAMI') {
+    description('Build Jumphost AMI from Base AMI')
+    // Run this job if the BuildBaseAMI job is successful
+    triggers{
+        upstream('Build/BuildBaseAMI', 'SUCCESS')
+    }
+    definition {
+        cps {
+            script(readFileFromWorkspace('lab3/resources/jenkins_jobs/BuildJumphostAMI.pipeline.groovy'))
+            sandbox()
+        }
+    }
+}
+
+pipelineJob('Build/BuildJenkinsAMI') {
+    description('Build Jenkins AMI from Base AMI')
+    // Run this job if the BuildBaseAMI job is successful
+    triggers{
+        upstream('Build/BuildBaseAMI', 'SUCCESS')
+    }
+    definition {
+        cps {
+            script(readFileFromWorkspace('lab3/resources/jenkins_jobs/BuildJenkinsAMI.pipeline.groovy'))
+            sandbox()
+        }
+    }
+}

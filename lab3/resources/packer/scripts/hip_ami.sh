@@ -2,4 +2,4 @@
 
 set -exo pipefail
 
-echo "HIP AMI updated at $(date)" > /opt/hip.txt
+echo "HIP AMI built at $(date)" > /opt/hip.txt

@@ -11,4 +11,4 @@ if ! command -v docker; then
   systemctl enable docker --now
 fi
 
-echo "OK!" > /root/done.txt
+echo "App AMI built at $(date)" > /opt/app.txt

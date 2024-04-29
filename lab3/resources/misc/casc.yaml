@@ -44,6 +44,7 @@ credentials:
               username: "ec2-user"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  numExecutors: 3
   securityRealm:
     local:
       allowsSignup: false
