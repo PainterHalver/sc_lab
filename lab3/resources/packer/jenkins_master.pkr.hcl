@@ -36,6 +36,6 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo -E -S sh '{{ .Path }}'"
-    inline = [templatefile("${path.root}/scripts/jenkins_master.sh", {  })]
+    inline = [templatefile("./scripts/jenkins_master.sh", {  })]
   }
 }

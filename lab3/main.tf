@@ -41,9 +41,10 @@ module "jenkins" {
   public_subnet_id       = module.vpc.public_subnet_id
   other_public_subnet_id = module.vpc.other_public_subnet_id
   private_subnet_id      = module.vpc.private_subnet_id
+  efs_dns_name           = module.efs.dns_name
 
   default_tags = var.default_tags
-  depends_on   = [module.vpc]
+  depends_on   = [module.vpc, module.efs]
 }
 
 module "app" {

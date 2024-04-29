@@ -19,6 +19,7 @@ resource "aws_instance" "jenkins" {
     agent_subnet_id            = var.private_subnet_id // same as the master
     agent_instance_profile_arn = module.ec2_jenkins_profle.profile_arn
     agent_ami_id               = data.aws_ami.jenkins_agent.id
+    efs_dns_name               = var.efs_dns_name
   })
 
   tags = merge(var.default_tags, {

@@ -28,7 +28,7 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo -E -S sh '{{ .Path }}'"
-    inline = [templatefile("${path.root}/scripts/hip_ami.sh", {  })]
+    inline = [templatefile("./scripts/hip_ami.sh", {  })]
   }
 
   // Push latest data to s3 after creating the AMI: s3://hip.daohiep.me/images/aws/centos/latest

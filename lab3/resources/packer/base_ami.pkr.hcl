@@ -32,6 +32,6 @@ build {
 
   provisioner "shell" {
     execute_command = "sudo -E -S sh '{{ .Path }}'"
-    inline = [templatefile("${path.root}/scripts/base_ami.sh", {  })]
+    inline = [templatefile("./scripts/base_ami.sh", {  })]
   }
 }

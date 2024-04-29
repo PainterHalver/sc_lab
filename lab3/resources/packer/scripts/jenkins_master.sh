@@ -54,7 +54,6 @@ usermod -aG docker jenkins
 mkdir -p /usr/lib/systemd/system/jenkins.service.d
 cat > /usr/lib/systemd/system/jenkins.service.d/overrides.conf <<EOF
 [Service]
-Environment="CASC_JENKINS_CONFIG=/var/lib/jenkins/casc.yaml"
 Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -Xmx512m"
 EOF
 

@@ -44,3 +44,8 @@ variable "admin_password" {
   type        = string
   default     = "admin123"
 }
+
+variable "efs_dns_name" {
+  description = "The DNS name of the EFS file system to mount Jenkins Home"
+  type        = string
+}
