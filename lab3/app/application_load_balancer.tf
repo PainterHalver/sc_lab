@@ -51,6 +51,12 @@ resource "aws_lb_target_group" "ec2_app_http" {
   vpc_id               = var.vpc_id
   deregistration_delay = 30
 
+  stickiness {
+    enabled         = true
+    type            = "lb_cookie"
+    cookie_duration = 86400 // 1 day
+  }
+
   health_check {
     enabled             = true
     healthy_threshold   = 3
