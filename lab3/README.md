@@ -1,6 +1,6 @@
 # Checklist
 
-#### Old Requirements
+### Old Requirements
 
 🟩Use Terraform
 🟥Use Makefile
@@ -39,7 +39,75 @@ Rule to check SG rule compliance
 🟩S3 (CSV files)
 🟨Encrypted with KMS key
 
-#### New Requirements
+### New Requirements
+
+Use Terraform
+- 🟨Build a pipeline to run terraform
+- 🟥Dry-Run mode: True/False
+🟥Use Makefile: To simplify command execution and automate repetitive tasks
+Infrastructure:
+- 🟩Use one VPC
+- 🟩Jenkins for CI/CD: 1
+  - 🟨SonarScanner CLI
+- 🟥jumphost: 1
+- 🟨app (Docker Compose on EC2)
+- 🟩Use ASG, LB
+- 🟩RDS DB: Store non-compliant resource data (CSV info)
+- 🟨SonarQube server: 1
+- Create EFS: As persistant data storage
+  - 🟥home dir for jumphost
+  - 🟩data dir for Jenkins, SonarQube
+- 🟥S3 bucket: must not be public and encrypted with a KMS key.
+- 🟥DNS (Route53): private dns, use domain name for each host
+- 🟩Tagging resources with required tags Group:CyberDevOps, Environment:development
+- Following resources are considered non-compliant resources:
+  - 🟩type of EC2, EBS volume, RDS, SG
+  - 🟩not enough required tags
+  - 🟩SG includes 0.0.0.0/0 inbound rule
+  - 🟩S3 bucket is not encrypted by a KMS key
+Use CloudWatch to monitor:
+- 🟥ASG, LB: healthy/unhealthy, latency, number of error requests, etc.
+- 🟥CPU, mem, disk of DB
+- 🟥SNS: send monitoring alerts (CPU, memory, disk)
+- 🟥Send app logs, app server init logs to CloudWatch
+Build AMI using packer:
+- 🟩Build a golden(base) AMI that is used to build all other AMIs.
+- 🟩Whenever a new golden AMI is released (built), other AMI builds are triggered automatically.
+- 🟩AMIs for Jenkins, Jumphost and app will be built based on the golden AMI.
+App (3-tier model)
+- 🟩Flask API
+- Use cloud-init to initialise server
+  - 🟩Check out source code
+  - 🟩Run Docker Compose
+- 🟩Use Python code to export non-compliance security groups
+- Build a web page:
+  - 🟩Click the "Scan" button: The app will export the current non-compliant resources to a CSV file
+  - 🟩Store CSV path to DB, and CVS file to S3
+  - 🟩Use S3 presigned URLs with a 12-hour expiration time
+  - 🟩Display the list of exported CSV files
+  - 🟩Click on each CSV file to download
+  - 🟩CSV file name should include a time stamp for easy identification
+
+App pipelines:
+- 🟩Use SonarQube to scan app source code, build Docker image and push to ECR
+- 🟩Deploy new app version (Can use CodeDeploy) => Using terraform, apply new launch template version
+Patching with new base AMI (e.g., by running the terraform pipeline)
+- 🟥Jumphost, 🟨Jenkins, 🟨app should be patched easily without affecting server data
+
+#### Checklist
+🟩AMIs are built.
+🟨Instances are placed in correct subnets.
+🟨Instances are running appropriate AMI.
+🟨Can access each instance via SSH.
+🟩Can access Jenkins, SonarQube, and App ui.
+🟨App is functioning correctly.
+🟨When auto scaling group launches new app instance, the new instance must have the same app version as the existing ones and it also can process incoming requests.
+🟨App CI/CD pipeline can successfully build, test and deploy the app.
+🟥Terraform pipeline can plan when git PRs are created and apply changes when PRs are merged.
+🟨Can view scan results in SonarQube.
+🟨Can update instances' AMIs without losing data.
+🟥Appropriate Cloudwatch Alarms are created.
+🟥Can view app logs in CloudWatch Logs.
 
 ### Notes
 
@@ -50,31 +118,6 @@ Rule to check SG rule compliance
 - https://aws.amazon.com/vpc/faqs/#:~:text=two%20instances%20communicate%20using%20public%20IP
 - yum mirrors may deny access from some IPs/regions like `seoul`, best to use `sydney` or `singapore`
 - AWS's AMI has package mananger source set to AWS's own mirror, which will cost REGIONAL DATA TRANSFER as opposed to using public mirrors, which is free inbound: https://www.reddit.com/r/aws/comments/17s1jsd/comment/ksui2rn/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-
-#### EFS + DockerCompose?
-
-- UserData Script to clone github repo and run docker compose -> Pull and run image from ECR
-- Docker compose mount EFS volume to store data/logs??
-
-```yaml
-# Example
-version: "3"
-services:
-  web:
-    image: my-web-app:latest
-    environment:
-      - DATABASE_URL=postgres://user:password@my-rds-endpoint:5432/mydatabase
-    volumes:
-      - efs:/var/www/html
-
-volumes:
-  efs:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: addr=my-efs-endpoint,nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2
-      device: :/
-```
 
 #### Some questions:
 
@@ -217,3 +260,4 @@ This documents the progress and things I learned along the way.
 | Fri, Apr 26 | ✅ Automate creation of the SonarQube server.                                                                                                                                                | - Write user-data to install SonarQube<br />- Mount EFS volume, restore default seed data from S3.<br />- Load sonarqube_token from SSM with /run/secrets/secrets.properties file instead of passing in yaml config directly.<br />- Create a VPC Gateway Endpoint for S3.                                                                                                                                                                                                                                                          | - SonarQube data is stored at `$SONAR_HOME/data`<br />- Can run SonarQube for development with embedded H2 database, you'll see a warning message in the logs, and SonarQube will not start in production mode.<br />- To escape \${} in terraform template file, use \$\${}<br />- VPC Gateway Endpoint helps reduce internet traffic to S3, and it's free.<br />- VPC Gateway Endpoint works by creating a route in the route tables, pointing a `prefix list` (containing S3's IP ranges) to the gateway endpoint.                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Mon, Apr 29 | ✅ Mount Jenkins home folder to EFS. Manually update Jenkins without losing data.<br />✅ Rewrite deploy app pipeline with new terraform structure.                                           | - Add user-data script for Jenkins to mount EFS, init home dir if not exist.<br />- Add 1 day stickiness to app ALB target group.<br />- Group Jenkins jobs into folders.<br />- Add jobs to build Jenkins and Jumphost AMI.                                                                                                                                                                                                                                                                                                         | - Use EFS with bursting throughput to optimize cost, the 2.1TB credit is enough for the workload of the lab.<br />- ALB stickiness can help with rolling update by avoiding a case where an user can see 2 versions of the app when refreshing the page.<br />- Increase jenkins numExecutors to 3 to build 3 AMIs concurrently.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |             | - Create Jumphost with terraform.<br />- Build Jumphost AMI pipeline.<br />- Connect App CI to SonarQube server.                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|             |                                                                                                                                                                                               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
