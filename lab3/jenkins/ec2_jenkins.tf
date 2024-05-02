@@ -11,6 +11,10 @@ resource "aws_instance" "jenkins" {
     volume_size           = 10
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   user_data = templatefile("${path.module}/user-data/jenkins_master.sh.tftpl", {
     admin_password             = var.admin_password
     agent_region               = var.aws_region
@@ -170,6 +174,7 @@ module "ec2_jenkins_profle" {
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
     "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
     "arn:aws:iam::aws:policy/IAMFullAccess",
-    "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+    "arn:aws:iam::aws:policy/AmazonSSMFullAccess",
+    "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess"
   ]
 }

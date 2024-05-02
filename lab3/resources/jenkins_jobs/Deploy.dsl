@@ -13,3 +13,13 @@ pipelineJob('Deploy/DeployJumphost') {
         }
     }
 }
+
+pipelineJob('Deploy/DeployJenkinsMaster') {
+    description('Deploy/Patch Jenkins master server')
+    definition {
+        cps {
+            script(readFileFromWorkspace('lab3/resources/jenkins_jobs/DeployJenkinsMaster.pipeline.groovy'))
+            sandbox()
+        }
+    }
+}
