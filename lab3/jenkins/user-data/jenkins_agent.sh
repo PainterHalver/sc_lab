@@ -25,3 +25,9 @@ sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/dock
 sudo yum install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker ec2-user
 systemctl start docker
+
+# Add public key for terraform
+mkdir -p /home/ec2-user/.ssh
+cat > /home/ec2-user/.ssh/id_rsa.pub <<EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCcjv0B6NjewjBZszn1fatY+UNcB7Ln4g2s3R+NoMH6Y+eprLSXlIyZaFnYh3b/pejPPz9g5YyYI6f+3Q5YCQ9FhSgkxwP0H22zOcKhqAfZW9RoVOtHBS5Pe7DCxtzlNRpmkdQtDkJ5ooWnfHAsofN140YZXSEHJqwo+xOqPzsHen/cm98Fmx3QSbcdqIobahF/WiuiYv45RpgORnEQKxlhz/Wb2TGsMGVtNbcIZYG2UPARKywYpbrbgezoJSKrkc3elHQ7NJahwLlppuT9f6ZxQxstBq5itFgydgnAzL/fCT3M3nA6hDH6fnzWGcGKHuHPue2reFVgw0UswktzLQp5NBuwa7G1lH+PyHImLX1B/yiRflF5YZudrmOACyxExhgXBFrY60waCi7q2xaCtmqL/YCYVkH7pDtjcTTHiMp0UXWq5/j7Yv5J67UpDGzrUb16Sb1Fja5bdnjrJrq64r3QJSJxVy+974v0U5fR90iamCA9vmYaY7DV66ILd/OSBmk= root@ldap-server-instance
+EOF
