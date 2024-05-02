@@ -8,15 +8,15 @@ data "aws_ami" "jenkins" {
   }
 }
 
-data "aws_ami" "jenkins_agent" {
-  most_recent = true
-  owners      = ["679593333241"]
+# data "aws_ami" "jenkins_agent" {
+#   most_recent = true
+#   owners      = ["679593333241"]
 
-  filter {
-    name   = "name"
-    values = ["CentOS-Stream-ec2-9-*"]
-  }
-}
+#   filter {
+#     name   = "name"
+#     values = ["CentOS-Stream-ec2-9-*"]
+#   }
+# }
 
 data "aws_ami" "centos_9_stream" {
   most_recent = true

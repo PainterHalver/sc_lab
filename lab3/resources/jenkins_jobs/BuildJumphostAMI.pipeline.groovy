@@ -1,7 +1,9 @@
 #!/usr/bin/env groovy
 
 pipeline {
-    agent any
+    agent {
+        label 'ec2-agent'
+    }
     stages {
         stage('Checkout') {
             steps {

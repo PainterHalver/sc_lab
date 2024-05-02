@@ -1,6 +1,6 @@
 resource "aws_instance" "jenkins" {
   ami                    = data.aws_ami.jenkins.id
-  instance_type          = "t3.small"
+  instance_type          = "t2.micro"
   key_name               = aws_key_pair.jenkins.key_name
   iam_instance_profile   = module.ec2_jenkins_profle.profile_name
   subnet_id              = var.private_subnet_id
@@ -18,7 +18,7 @@ resource "aws_instance" "jenkins" {
     agent_sg_name              = aws_security_group.jenkins.name
     agent_subnet_id            = var.private_subnet_id // same as the master
     agent_instance_profile_arn = module.ec2_jenkins_profle.profile_arn
-    agent_ami_id               = data.aws_ami.jenkins_agent.id
+    agent_ami_id               = data.aws_ami.jenkins.id
     efs_dns_name               = var.efs_dns_name
   })
 

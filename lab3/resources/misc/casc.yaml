@@ -44,7 +44,7 @@ credentials:
               username: "ec2-user"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
-  numExecutors: 3
+  numExecutors: 2
   securityRealm:
     local:
       allowsSignup: false
@@ -88,7 +88,7 @@ jenkins:
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
         monitoring: false
-        numExecutors: 2
+        numExecutors: 4
         remoteAdmin: "ec2-user"
         remoteFS: "/home/ec2-user"
         securityGroups: "jenkins-sg" # Change here
@@ -99,35 +99,16 @@ jenkins:
         - name: "Name"
           value: "ec2-jenkins-agent"
         tenancy: Default
-        type: T2Micro
+        type: T3Small
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
 
           set -exo pipefail
 
-          # Install common dependencies
-          yum clean all
-          yum install -y nano git unzip wget java-17-openjdk
-
-          # Install aws-cli
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          ./aws/install
-          rm -rf awscliv2.zip aws
-
-          # Download packer
-          wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
-          unzip packer_1.10.2_linux_amd64.zip
-          which -a packer | xargs rm -rf
-          mv packer /usr/bin/packer
-          hash -r
-          rm packer_1.10.2_linux_amd64.zip
-
-          # Install docker
-          sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-          sudo yum install -y docker-ce docker-ce-cli containerd.io
+          systemctl stop jenkins
           usermod -aG docker ec2-user
+          systemctl start docker
         zone: "ap-southeast-1a" # Change here
       useInstanceProfileForCredentials: true
 security:

@@ -57,7 +57,7 @@ credentials:
               username: "ec2-user"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
-  numExecutors: 3
+  numExecutors: 2
   securityRealm:
     local:
       allowsSignup: false
@@ -97,11 +97,11 @@ jenkins:
         metadataHopsLimit: 1
         metadataSupported: true
         metadataTokensRequired: false
-        minimumNumberOfInstances: 0
+        minimumNumberOfInstances: 1
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
         monitoring: false
-        numExecutors: 2
+        numExecutors: 4
         remoteAdmin: "ec2-user"
         remoteFS: "/home/ec2-user"
         securityGroups: "${agent_sg_name}" # Change here
@@ -112,34 +112,14 @@ jenkins:
         - name: "Name"
           value: "ec2-jenkins-agent"
         tenancy: Default
-        type: T2Micro
+        type: T3Small
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
 
           set -exo pipefail
 
-          # Install common dependencies
-          yum clean all
-          yum install -y nano git unzip wget java-17-openjdk
-
-          # Install aws-cli
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          ./aws/install
-          rm -rf awscliv2.zip aws
-
-          # Download packer
-          wget https://releases.hashicorp.com/packer/1.10.2/packer_1.10.2_linux_amd64.zip
-          unzip packer_1.10.2_linux_amd64.zip
-          which -a packer | xargs rm -rf
-          mv packer /usr/bin/packer
-          hash -r
-          rm packer_1.10.2_linux_amd64.zip
-
-          # Install docker
-          sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-          sudo yum install -y docker-ce docker-ce-cli containerd.io
+          systemctl stop jenkins
           usermod -aG docker ec2-user
           systemctl start docker
         zone: "${agent_az}" # Change here
@@ -179,7 +159,7 @@ jobs:
           hudsonStartupTrigger {
             quietPeriod("20")
             runOnChoice("ON_CONNECT")
-            label("")
+            label("master")
             nodeParameterName("")
           }
         }
@@ -211,20 +191,19 @@ jobs:
 EOF
 }
 
-function mount_efs () {
-  mkdir -p /data
-  sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
-
-  # Mount EFS on boot with options like above
-  echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
-}
-
 function get_secrets () {
   # Get sonarcloud_token from SSM and store it in Jenkins secrets file
   mkdir -p /run/secrets
   sonarcloud_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
   echo "sonarcloud_token=$sonarcloud_token" >> /run/secrets/secrets.properties
 }
+
+# Mount EFS
+mkdir -p /data
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
+
+# Mount EFS on boot with options like above
+echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
 
 # Config CASC plugin file path
 mkdir -p $JENKINS_HOME
@@ -242,7 +221,6 @@ if [ ! "$(ls -A $JENKINS_HOME)" ]; then
 fi
 
 # Reload Jenkins configuration as code
-mount_efs
 get_secrets
 reload_jenkins_config
 
