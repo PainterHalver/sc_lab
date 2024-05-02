@@ -2,6 +2,10 @@ output "nat_public_ip" {
   value = module.vpc.nat_public_ip
 }
 
+output "jumphost_public_ip" {
+  value = module.jumphost.jumphost_public_ip
+}
+
 output "sonarqube_alb_dns_name" {
   value = module.sonarqube.sonarqube_alb_dns_name
 }
@@ -12,6 +16,10 @@ output "sonarqube_private_ip" {
 
 output "jenkins_alb_dns_name" {
   value = module.jenkins.jenkins_alb_dns_name
+}
+
+output "jenkins_private_ip" {
+  value = module.jenkins.jenkins_private_ip
 }
 
 output "rds" {

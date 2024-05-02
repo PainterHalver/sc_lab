@@ -19,6 +19,17 @@ module "efs" {
   depends_on   = [module.vpc]
 }
 
+module "jumphost" {
+  source          = "./jumphost"
+  instance_type   = var.instance_type
+  vpc_id          = module.vpc.vpc_id
+  subnet_id       = module.vpc.public_subnet_id
+  ssh_pubkey_path = var.ssh_pubkey_path
+
+  default_tags = var.default_tags
+  depends_on   = [module.vpc]
+}
+
 module "sonarqube" {
   source                 = "./sonarqube"
   ssh_pubkey_path        = var.ssh_pubkey_path
