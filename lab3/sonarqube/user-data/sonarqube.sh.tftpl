@@ -87,7 +87,7 @@ EOF
 
 # Download default backup if $SONARQUBE_DATA is empty
 if [ ! "$(ls -A $SONARQUBE_DATA)" ]; then
-    /usr/local/bin/aws s3 cp s3://nazii/sonarqube_data_28042024.tar.gz /tmp/sonarqube-backup.tar.gz
+    /usr/local/bin/aws s3 cp s3://starcamp-singapore-bucket/sonarqube_data_28042024.tar.gz /tmp/sonarqube-backup.tar.gz
     tar -xzf /tmp/sonarqube-backup.tar.gz -C $SONARQUBE_DATA
     rm -rf /tmp/sonarqube-backup.tar.gz
 fi
