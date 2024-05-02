@@ -1,6 +1,5 @@
 module "vpc_with_nat_instance" {
   source              = "../modules/vpc"
-  aws_region          = var.aws_region
   vpc_cidr            = "10.0.0.0/16"
   public_subnet_cidr  = "10.0.0.0/24"
   private_subnet_cidr = "10.0.1.0/24"

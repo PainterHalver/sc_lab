@@ -1,7 +1,6 @@
 module "ec2_cloudwatch_profile" {
   source = "../modules/ec2_profile"
 
-  aws_region   = var.aws_region
   default_tags = var.default_tags
 
   profile_name     = "CustomCloudWatchAgentServerProfile"
