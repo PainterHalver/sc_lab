@@ -2,6 +2,12 @@
 
 set -exo pipefail
 
+# Variables
+JENKINS_OLD_HOME=/var/lib/jenkins
+JENKINS_HOME=/data/jenkins
+JENKINS_USER=jenkins
+JENKINS_GROUP=jenkins
+
 function reload_jenkins_config () {
   # Create Jenkins configuration as code file
   cat > $JENKINS_HOME/casc.yaml <<EOF
@@ -205,23 +211,20 @@ jobs:
 EOF
 }
 
-# Config Jenkins to use EFS as home directory
-JENKINS_OLD_HOME=/var/lib/jenkins
-JENKINS_HOME=/data/jenkins
-JENKINS_USER=jenkins
-JENKINS_GROUP=jenkins
+function mount_efs () {
+  mkdir -p /data
+  sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
 
-# Mount the EFS volume
-mkdir -p /data
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
+  # Mount EFS on boot with options like above
+  echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
+}
 
-# Mount EFS on boot with options like above
-echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
-
-# Get sonarcloud_token from SSM and store it in Jenkins secrets file
-mkdir -p /run/secrets
-sonarcloud_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
-echo "sonarcloud_token=$sonarcloud_token" >> /run/secrets/secrets.properties
+function get_secrets () {
+  # Get sonarcloud_token from SSM and store it in Jenkins secrets file
+  mkdir -p /run/secrets
+  sonarcloud_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
+  echo "sonarcloud_token=$sonarcloud_token" >> /run/secrets/secrets.properties
+}
 
 # Config CASC plugin file path
 mkdir -p $JENKINS_HOME
@@ -239,6 +242,8 @@ if [ ! "$(ls -A $JENKINS_HOME)" ]; then
 fi
 
 # Reload Jenkins configuration as code
+mount_efs
+get_secrets
 reload_jenkins_config
 
 # Add public key for terraform
