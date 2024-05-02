@@ -226,6 +226,16 @@ Reference:
 - Throughput modes: https://docs.aws.amazon.com/efs/latest/ug/performance.html#throughput-modes
 - Pricing (Elastic and Provisioned): https://aws.amazon.com/efs/pricing/
 
+#### Run Flow
+
+- Build HIP, Base AMI manually.
+- Build Jenkins, App, Jumphost AMIs manually, these are based on the Base AMI.
+```sh
+packer build hip.pkr.hcl
+packer build -var 'hip_ami_id=ami-07dc7fbc73bffbeb5' jenkins.pkr.hcl
+
+packer build
+
 #### Other Ideas?
 
 - [X] Write a script to delete all AMIs.

@@ -10,6 +10,10 @@ resource "aws_instance" "jumphost" {
     volume_size           = 10
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = merge(var.default_tags, {
     Name = "ec2-jumphost"
   })

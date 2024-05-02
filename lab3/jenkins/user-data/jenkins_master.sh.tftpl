@@ -217,18 +217,12 @@ JENKINS_GROUP=jenkins
 mkdir -p /data
 sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
 
-# Add public key for terraform
-mkdir -p $JENKINS_HOME/.ssh
-cat > $JENKINS_HOME/.ssh/id_rsa.pub <<EOF
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCcjv0B6NjewjBZszn1fatY+UNcB7Ln4g2s3R+NoMH6Y+eprLSXlIyZaFnYh3b/pejPPz9g5YyYI6f+3Q5YCQ9FhSgkxwP0H22zOcKhqAfZW9RoVOtHBS5Pe7DCxtzlNRpmkdQtDkJ5ooWnfHAsofN140YZXSEHJqwo+xOqPzsHen/cm98Fmx3QSbcdqIobahF/WiuiYv45RpgORnEQKxlhz/Wb2TGsMGVtNbcIZYG2UPARKywYpbrbgezoJSKrkc3elHQ7NJahwLlppuT9f6ZxQxstBq5itFgydgnAzL/fCT3M3nA6hDH6fnzWGcGKHuHPue2reFVgw0UswktzLQp5NBuwa7G1lH+PyHImLX1B/yiRflF5YZudrmOACyxExhgXBFrY60waCi7q2xaCtmqL/YCYVkH7pDtjcTTHiMp0UXWq5/j7Yv5J67UpDGzrUb16Sb1Fja5bdnjrJrq64r3QJSJxVy+974v0U5fR90iamCA9vmYaY7DV66ILd/OSBmk= root@ldap-server-instance
-EOF
-
 # Mount EFS on boot with options like above
 echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
 
 # Get sonarcloud_token from SSM and store it in Jenkins secrets file
 mkdir -p /run/secrets
-sonarcloud_token=$(aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
+sonarcloud_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
 echo "sonarcloud_token=$sonarcloud_token" >> /run/secrets/secrets.properties
 
 # Config CASC plugin file path
@@ -240,14 +234,20 @@ EOF
 systemctl stop jenkins
 systemctl daemon-reload
 
-# Reload Jenkins configuration as code
-reload_jenkins_config
-
 # Init Jenkins home if it's empty
 if [ ! "$(ls -A $JENKINS_HOME)" ]; then
   # Migrate Jenkins home to EFS
   cp -rf $JENKINS_OLD_HOME/* $JENKINS_HOME
 fi
+
+# Reload Jenkins configuration as code
+reload_jenkins_config
+
+# Add public key for terraform
+mkdir -p $JENKINS_HOME/.ssh
+cat > $JENKINS_HOME/.ssh/id_rsa.pub <<EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCcjv0B6NjewjBZszn1fatY+UNcB7Ln4g2s3R+NoMH6Y+eprLSXlIyZaFnYh3b/pejPPz9g5YyYI6f+3Q5YCQ9FhSgkxwP0H22zOcKhqAfZW9RoVOtHBS5Pe7DCxtzlNRpmkdQtDkJ5ooWnfHAsofN140YZXSEHJqwo+xOqPzsHen/cm98Fmx3QSbcdqIobahF/WiuiYv45RpgORnEQKxlhz/Wb2TGsMGVtNbcIZYG2UPARKywYpbrbgezoJSKrkc3elHQ7NJahwLlppuT9f6ZxQxstBq5itFgydgnAzL/fCT3M3nA6hDH6fnzWGcGKHuHPue2reFVgw0UswktzLQp5NBuwa7G1lH+PyHImLX1B/yiRflF5YZudrmOACyxExhgXBFrY60waCi7q2xaCtmqL/YCYVkH7pDtjcTTHiMp0UXWq5/j7Yv5J67UpDGzrUb16Sb1Fja5bdnjrJrq64r3QJSJxVy+974v0U5fR90iamCA9vmYaY7DV66ILd/OSBmk= root@ldap-server-instance
+EOF
 
 # Change Jenkins user's home directory
 usermod -d $JENKINS_HOME $JENKINS_USER
