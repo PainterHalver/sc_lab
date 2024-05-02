@@ -3,7 +3,7 @@
 set -exo pipefail
 
 # Install dependencies
-yum install -y wget git unzip yum-utils nfs-utils
+yum install -y wget git unzip yum-utils nfs-utils make
 
 # Enable 2GB of swap file
 sudo fallocate -l 2G /swapfile

@@ -21,5 +21,5 @@ variable "subnet_id" {
 
 variable "vpc_cidr" {
   description = "The CIDR block of the VPC, to restrict EFS security group"
-    type        = string
+  type        = string
 }
