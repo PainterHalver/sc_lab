@@ -1,0 +1,422 @@
+{
+    "widgets": [
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "HealthyHostCount",
+                        "TargetGroup",
+                        "targetgroup/ec2-app-http-tg/09a10a7a0c016be8",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "region": "ap-southeast-1"
+                        }
+                    ],
+                    [
+                        ".",
+                        "UnHealthyHostCount",
+                        ".",
+                        ".",
+                        ".",
+                        ".",
+                        {
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "sparkline": true,
+                "view": "singleValue",
+                "region": "ap-southeast-1",
+                "stat": "Average",
+                "period": 30,
+                "title": "ALB Healthiness"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 6,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "RequestCount",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "id": "m1",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "period": 30,
+                "title": "ALB Request Count"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        {
+                            "expression": "m1 - m2 - m3",
+                            "label": "ErrorRequestCount",
+                            "id": "q1",
+                            "region": "ap-southeast-1",
+                            "color": "#d62728"
+                        }
+                    ],
+                    [
+                        "AWS/ApplicationELB",
+                        "RequestCount",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "id": "m1",
+                            "region": "ap-southeast-1",
+                            "visible": false
+                        }
+                    ],
+                    [
+                        ".",
+                        "HTTPCode_Target_3XX_Count",
+                        ".",
+                        ".",
+                        {
+                            "label": "3xx_count",
+                            "id": "m2",
+                            "visible": false,
+                            "region": "ap-southeast-1"
+                        }
+                    ],
+                    [
+                        ".",
+                        "HTTPCode_Target_2XX_Count",
+                        ".",
+                        ".",
+                        {
+                            "label": "2xx_count",
+                            "id": "m3",
+                            "visible": false,
+                            "region": "ap-southeast-1",
+                            "color": "#17becf"
+                        }
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "period": 30,
+                "title": "ALB Error Request Count"
+            }
+        },
+        {
+            "height": 6,
+            "width": 6,
+            "y": 0,
+            "x": 18,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "TargetResponseTime",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "stat": "Average",
+                "period": 30,
+                "title": "TargetResponseTime"
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 12,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "HTTPCode_Target_5XX_Count",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Target 5XXs",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 8,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "HTTPCode_Target_4XX_Count",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Target 4XXs",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 4,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "HTTPCode_Target_3XX_Count",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Target 3XXs",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "HTTPCode_Target_2XX_Count",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Target 2XXs",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 20,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "ActiveConnectionCount",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Active Connection Count",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 4,
+            "y": 6,
+            "x": 16,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/ApplicationELB",
+                        "ConsumedLCUs",
+                        "LoadBalancer",
+                        "app/app-alb/925ebe9a8ba0d46d",
+                        {
+                            "label": "app-alb",
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "period": 30,
+                "region": "ap-southeast-1",
+                "stat": "Sum",
+                "title": "Consumed Load Balancer Capacity Units",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                },
+                "view": "timeSeries",
+                "stacked": false
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 13,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/RDS",
+                        "FreeStorageSpace",
+                        "DBInstanceIdentifier",
+                        "app-db",
+                        {
+                            "region": "ap-southeast-1"
+                        }
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "stat": "Average",
+                "period": 30,
+                "title": "RDS FreeStorageSpace"
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 13,
+            "x": 8,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/RDS",
+                        "CPUUtilization",
+                        "DBInstanceIdentifier",
+                        "app-db"
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "title": "RDS CPUUtilization",
+                "stat": "Average",
+                "period": 30
+            }
+        },
+        {
+            "height": 7,
+            "width": 8,
+            "y": 13,
+            "x": 16,
+            "type": "metric",
+            "properties": {
+                "metrics": [
+                    [
+                        "AWS/RDS",
+                        "FreeableMemory",
+                        "DBInstanceIdentifier",
+                        "app-db"
+                    ]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "ap-southeast-1",
+                "stat": "Average",
+                "period": 30,
+                "title": "RDS FreeableMemory (MemAvailable)"
+            }
+        }
+    ]
+}

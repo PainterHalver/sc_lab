@@ -61,6 +61,7 @@ module "jenkins" {
 
 module "app" {
   source                 = "./app"
+  aws_region             = var.aws_region
   aws_availability_zone  = var.aws_availability_zone
   ssh_pubkey_path        = var.ssh_pubkey_path
   instance_type          = var.instance_type
