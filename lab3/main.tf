@@ -25,9 +25,10 @@ module "jumphost" {
   vpc_id          = module.vpc.vpc_id
   subnet_id       = module.vpc.public_subnet_id
   ssh_pubkey_path = var.ssh_pubkey_path
+  efs_dns_name    = module.efs.dns_name
 
   default_tags = var.default_tags
-  depends_on   = [module.vpc]
+  depends_on   = [module.vpc, module.efs]
 }
 
 module "sonarqube" {

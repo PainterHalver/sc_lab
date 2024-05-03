@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -exo pipefail
+
+function mount_efs () {
+    # Mount EFS
+    mkdir -p /data
+    sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ /data
+
+    # Mount EFS on boot with options like above
+    echo "${efs_dns_name}:/ /data nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 0 0" >> /etc/fstab
+}
+
+# Install packages, if not already installed
+yum install -y nfs-utils
+
+# Mount EFS and init ec2-user home directory if not already exist in mount
+mount_efs
+
+# SELinux allow nfs home directories
+setsebool -P use_nfs_home_dirs 1
+
+# Create sample users and mount their home directories to /data/home
+for username in "jane" "john" "hiep"
+do
+    mkdir -p /data/home/$username
+    useradd -d /data/home/$username $username
+    echo $username:admin123 | chpasswd
+    # Copy .ssh folder if not exist
+    if [ ! -d /data/home/$username/.ssh ]; then
+        cp -r /home/ec2-user/.ssh /data/home/$username/
+    fi
+    chown $username:$username -R /data/home/$username
+    chmod 700 /data/home/$username
+    usermod -aG wheel $username # Add user to sudo group
+done

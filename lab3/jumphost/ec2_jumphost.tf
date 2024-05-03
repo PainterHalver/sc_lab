@@ -5,6 +5,10 @@ resource "aws_instance" "jumphost" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.jumphost.id]
 
+  user_data = templatefile("${path.module}/user-data/jumphost.sh.tftpl", {
+    efs_dns_name = var.efs_dns_name
+  })
+
   root_block_device {
     delete_on_termination = true
     volume_size           = 10

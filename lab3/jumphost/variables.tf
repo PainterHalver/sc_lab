@@ -22,3 +22,8 @@ variable "default_tags" {
   description = "The default tags to apply to resources"
   type        = map(string)
 }
+
+variable "efs_dns_name" {
+  description = "The DNS name of the EFS filesystem to mount home dir"
+  type        = string
+}
