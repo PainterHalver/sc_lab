@@ -82,6 +82,12 @@ module "app_instance_profile" {
 
   inline_policies = [
     {
+      name     = "CloudWatchAgentPutLogsRetentionInlinePolicy"
+      action   = ["logs:PutRetentionPolicy"]
+      effect   = "Allow"
+      resource = "arn:aws:logs:*:*:log-group:LAB-2:*"
+    },
+    {
       name   = "AppS3BucketObjectAccess"
       effect = "Allow"
       action = [
@@ -108,6 +114,7 @@ module "app_instance_profile" {
   ]
 
   managed_policy_arns = [
+    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
     "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
     "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess",
     "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
