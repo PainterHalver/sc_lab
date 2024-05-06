@@ -72,6 +72,21 @@ resource "aws_launch_template" "app" {
   tags = var.default_tags
 }
 
+resource "aws_autoscaling_policy" "app" {
+  name                   = "50-percent-scale-out"
+  autoscaling_group_name = aws_autoscaling_group.app.name
+  policy_type            = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value     = 50.0
+    disable_scale_in = true // Do not scale in
+  }
+}
+
 module "app_instance_profile" {
   source       = "../../modules/ec2_profile"
   default_tags = var.default_tags
