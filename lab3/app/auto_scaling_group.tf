@@ -110,6 +110,14 @@ module "app_instance_profile" {
         "ssm:GetParameter",
       ],
       resource = "*"
+    },
+    {
+      name   = "KMSFullPolicy"
+      effect = "Allow"
+      action = [
+        "kms:*",
+      ],
+      resource = "*"
     }
   ]
 
