@@ -25,6 +25,9 @@ check:
 	terraform fmt -check=true -recursive
 	terraform validate
 
+dry-run:
+	terraform plan
+
 apply-vpc:
 	terraform apply -target=module.vpc
 

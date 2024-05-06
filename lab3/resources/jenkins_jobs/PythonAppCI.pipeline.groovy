@@ -18,13 +18,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'sonar-scanner'
                     withSonarQubeEnv('SonarCloud Server') {
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.organization=hiep-dao \
-                        -Dsonar.projectKey=hiep-dao_scl-lab3-app \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=https://sonarcloud.io
-                        """
+                        sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
             }

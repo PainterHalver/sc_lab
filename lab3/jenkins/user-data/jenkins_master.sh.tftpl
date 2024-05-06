@@ -18,7 +18,7 @@ credentials:
           - string:
               scope: GLOBAL
               id: "sonarqube_token"
-              secret: $${sonarcloud_token}
+              secret: $${sonarqube_token}
               description: "SonarQube Token"
           - basicSSHUserPrivateKey: # Change here
               description: "SSH Key Jenkins Master used to connect to Jenkins agent"
@@ -145,7 +145,7 @@ unclassified:
     installations:
     - credentialsId: "sonarqube_token"
       name: "SonarCloud Server"
-      serverUrl: "https://sonarcloud.io"
+      serverUrl: "${sonarqube_url}"
       triggers:
         skipScmCause: false
         skipUpstreamCause: false
@@ -202,10 +202,10 @@ EOF
 }
 
 function get_secrets () {
-  # Get sonarcloud_token from SSM and store it in Jenkins secrets file
+  # Get sonarqube_token from SSM and store it in Jenkins secrets file
   mkdir -p /run/secrets
-  sonarcloud_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarcloud_token --with-decryption --query Parameter.Value --output text)
-  echo "sonarcloud_token=$sonarcloud_token" >> /run/secrets/secrets.properties
+  sonarqube_token=$(/usr/local/bin/aws ssm get-parameter --name /jenkins/sonarqube_token --with-decryption --query Parameter.Value --output text)
+  echo "sonarqube_token=$sonarqube_token" >> /run/secrets/secrets.properties
 }
 
 # Mount EFS

@@ -49,3 +49,8 @@ variable "efs_dns_name" {
   description = "The DNS name of the EFS file system to mount Jenkins Home"
   type        = string
 }
+
+variable "sonarqube_url" {
+  description = "The URL of the SonarQube server"
+  type        = string
+}

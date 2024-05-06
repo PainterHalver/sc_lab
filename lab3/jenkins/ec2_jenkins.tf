@@ -24,6 +24,7 @@ resource "aws_instance" "jenkins" {
     agent_instance_profile_arn = module.ec2_jenkins_profle.profile_arn
     agent_ami_id               = data.aws_ami.jenkins.id
     efs_dns_name               = var.efs_dns_name
+    sonarqube_url              = var.sonarqube_url
   })
 
   tags = merge(var.default_tags, {
