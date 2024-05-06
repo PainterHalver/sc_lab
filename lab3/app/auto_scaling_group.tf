@@ -12,7 +12,7 @@ resource "aws_autoscaling_group" "app" {
   max_size                  = 3
   vpc_zone_identifier       = [var.private_subnet_id]                # Use this instead of availability_zones
   target_group_arns         = [aws_lb_target_group.ec2_app_http.arn] # Use this, load_balancers is for CLB
-  health_check_grace_period = 270                                    // Wait for 270 seconds before health-check, for user-data to complete
+  health_check_grace_period = 150                                    // Wait for 150 seconds before health-check, for user-data to complete
   health_check_type         = "ELB"                                  // Use ALB target group HTTP health check 
 
   launch_template {
@@ -38,7 +38,7 @@ resource "aws_launch_template" "app" {
 
   user_data = base64encode(templatefile("${path.module}/user-data/app.sh.tftpl", {
     db_user     = var.db_admin_user,
-    db_uri      = "${aws_db_instance.app.endpoint}/${aws_db_instance.app.db_name}",
+    db_uri      = "${aws_route53_record.rds.name}:3306/${aws_db_instance.app.db_name}",
     bucket_name = aws_s3_bucket.app.bucket
   }))
 

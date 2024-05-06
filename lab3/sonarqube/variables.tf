@@ -33,3 +33,13 @@ variable "efs_dns_name" {
   description = "The DNS name of the EFS file system to mount SonarQube data"
   type        = string
 }
+
+variable "route53_zone_id" {
+  description = "The Route 53 zone ID to create the DNS record for the SonarQube"
+  type        = string
+}
+
+variable "route53_zone_name" {
+  description = "The Route 53 zone name to create the DNS record for the SonarQube"
+  type        = string
+}

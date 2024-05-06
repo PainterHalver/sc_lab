@@ -37,7 +37,8 @@ destroy-vpc:
 destroy:
 	terraform destroy
 
-destroy-now:
+destroy-all:
+	terraform destroy -auto-approve -target=module.vpc
 	terraform destroy -auto-approve
 
 apply:

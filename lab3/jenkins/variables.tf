@@ -54,3 +54,13 @@ variable "sonarqube_url" {
   description = "The URL of the SonarQube server"
   type        = string
 }
+
+variable "route53_zone_id" {
+  description = "The Route 53 zone ID to create the DNS record for the SonarQube"
+  type        = string
+}
+
+variable "route53_zone_name" {
+  description = "The Route 53 zone name to create the DNS record for the SonarQube"
+  type        = string
+}

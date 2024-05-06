@@ -8,6 +8,17 @@ module "vpc" {
   default_tags = var.default_tags
 }
 
+resource "aws_route53_zone" "private" {
+  name = "go"
+
+  vpc {
+    vpc_id = module.vpc.vpc_id
+  }
+
+  depends_on = [ module.vpc ]
+  tags = var.default_tags
+}
+
 module "efs" {
   source                = "./efs"
   aws_availability_zone = var.aws_availability_zone
@@ -39,9 +50,11 @@ module "sonarqube" {
   other_public_subnet_id = module.vpc.other_public_subnet_id
   private_subnet_id      = module.vpc.private_subnet_id
   efs_dns_name           = module.efs.dns_name
+  route53_zone_id = aws_route53_zone.private.zone_id
+  route53_zone_name = aws_route53_zone.private.name
 
   default_tags = var.default_tags
-  depends_on   = [module.vpc, module.efs]
+  depends_on   = [module.vpc, module.efs, aws_route53_zone.private]
 }
 
 module "jenkins" {
@@ -55,6 +68,8 @@ module "jenkins" {
   private_subnet_id      = module.vpc.private_subnet_id
   efs_dns_name           = module.efs.dns_name
   sonarqube_url          = module.sonarqube.url
+  route53_zone_id = aws_route53_zone.private.zone_id
+  route53_zone_name = aws_route53_zone.private.name
 
   default_tags = var.default_tags
   depends_on   = [module.vpc, module.efs, module.sonarqube]
@@ -73,6 +88,8 @@ module "app" {
   private_subnet_id      = module.vpc.private_subnet_id
   database_subnet_ids    = module.vpc.database_subnet_ids
   app_git_commit_hash    = var.app_git_commit_hash
+  route53_zone_id = aws_route53_zone.private.zone_id
+  route53_zone_name = aws_route53_zone.private.name
 
   default_tags = var.default_tags
   depends_on   = [module.vpc]

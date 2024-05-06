@@ -42,6 +42,16 @@ resource "aws_db_instance" "app" {
   tags = var.default_tags
 }
 
+// ROUTE 53 RECORD
+resource "aws_route53_record" "rds" {
+  zone_id = var.route53_zone_id
+  name = "rds.${var.route53_zone_name}"
+  type = "CNAME"
+  ttl = "60"
+
+  records = [aws_db_instance.app.address]
+}
+
 // SUBNET GROUP
 resource "aws_db_subnet_group" "app" {
   name       = "app-db-subnet-group"

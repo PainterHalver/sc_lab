@@ -64,3 +64,13 @@ variable "app_git_commit_hash" {
   description = "The hash of the latest git commit, used to update if the ASG launch template"
   type        = string
 }
+
+variable "route53_zone_id" {
+  description = "The Route 53 zone ID to create the DNS record for the SonarQube"
+  type        = string
+}
+
+variable "route53_zone_name" {
+  description = "The Route 53 zone name to create the DNS record for the SonarQube"
+  type        = string
+}
