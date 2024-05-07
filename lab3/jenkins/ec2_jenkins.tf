@@ -165,6 +165,14 @@ module "ec2_jenkins_profle" {
       ],
       effect   = "Allow",
       resource = "*"
+    },
+    {
+      name   = "KMSFullPermissionPolicy"
+      effect = "Allow"
+      action = [
+        "kms:*",
+      ],
+      resource = "*"
     }
   ]
 
