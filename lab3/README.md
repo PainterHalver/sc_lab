@@ -59,7 +59,7 @@ Use Terraform
   - 🟩home dir for jumphost
   - 🟩data dir for Jenkins, SonarQube
 - 🟩S3 bucket: must not be public and encrypted with a KMS key.
-- 🟥DNS (Route53): private dns, use domain name for each host
+- 🟩DNS (Route53): private dns, use domain name for each host
 - 🟩Tagging resources with required tags Group:CyberDevOps, Environment:development
 - Following resources are considered non-compliant resources:
   - 🟩type of EC2, EBS volume, RDS, SG
@@ -131,7 +131,7 @@ App pipelines:
 - [X] What will be the use case of Makefile? => Simplify command execution and automate repetitive tasks
 - [X] What AMIs aside from the app AMI should we build from the Base(golden) AMI? => App, Jenkins, Jumphost
 - [X] How should the terraform project structure be? => Divide the project into stacks. E.g. Run network stack and use its output for app and jenkins.
-- [ ] Since the Jenkins master cannot patch its own AMI, what machine will we use to patch it?
+- [X] Since the Jenkins master cannot patch its own AMI, what machine will we use to patch it?
 
 - Jenkins patching can be run manually
 - All Jenkins, App, SonarQube need to be deployed in 1 VPC. Can use multiple terraform stacks to separate resources like App, Jenkins, Network.

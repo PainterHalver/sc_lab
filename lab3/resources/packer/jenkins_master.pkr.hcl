@@ -21,7 +21,7 @@ source "amazon-ebs" "base" {
   # CentOS Stream 9: ami-07dc7fbc73bffbeb5
   source_ami_filter {
     filters = {
-      name   = "CentOS-9-Base-*, CentOS-Stream-ec2-9-*" // CentOS-Stream-ec2-9-* for first time demo
+      name   = "CentOS-9-Base-*"
     }
     most_recent = true
     owners      = ["679593333241", "self"]
