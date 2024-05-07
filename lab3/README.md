@@ -101,14 +101,14 @@ App pipelines:
 🟩AMIs are built.
 🟩Instances are placed in correct subnets.
 🟩Instances are running appropriate AMI.
-🟨Can access each instance via SSH.
+🟩Can access each instance via SSH.
 🟩Can access Jenkins, SonarQube, and App ui.
-🟨App is functioning correctly.
-🟨When auto scaling group launches new app instance, the new instance must have the same app version as the existing ones and it also can process incoming requests.
-🟨App CI/CD pipeline can successfully build, test and deploy the app.
+🟩App is functioning correctly.
+🟩When auto scaling group launches new app instance, the new instance must have the same app version as the existing ones and it also can process incoming requests.
+🟩App CI/CD pipeline can successfully build, test and deploy the app.
 🟥Terraform pipeline can plan when git PRs are created and apply changes when PRs are merged.
-🟨Can view scan results in SonarQube.
-🟨Can update instances' AMIs without losing data.
+🟩Can view scan results in SonarQube.
+🟩Can update instances' AMIs without losing data.
 🟥Appropriate Cloudwatch Alarms are created.
 🟩Can view app logs in CloudWatch Logs.
 
@@ -234,18 +234,27 @@ Reference:
 - Throughput modes: https://docs.aws.amazon.com/efs/latest/ug/performance.html#throughput-modes
 - Pricing (Elastic and Provisioned): https://aws.amazon.com/efs/pricing/
 
-#### Run Flow
+#### RHEL or CentOS Stream AMI? The repo case
 
-- Build HIP, Base AMI manually.
-- Build Jenkins, App, Jumphost AMIs manually, these are based on the Base AMI.
+In the `AMI Catalog` section, under Quickstart AMIs, RHEL is featured as free tier eligible. But inside AWS Marketplace there are also many other free tier AMIs, CentOS Stream 9 included. So you might want to consider choosing one over the other.
+
+Red Hat Enterprise Linux 9 (RHEL9) is stable, does not have as many weird bugs as CentOS, some I and my team came across like yum repo access denied, running yum update would install buggy ssh version. But the stable yum repo for RHEL comes with a small (?) price.
+
+During lab 2 we were tasked to run yum update through a squid proxy and watch the logs. When using RHEL AMI, I noticed that the yum package uses AWS own mirrors to download the packages. That is why they are very fast and stable compared to CentOS.
+
+But the catch here is that those downloads are not counted as Internet ingress traffic (which is free). They are counted as **cross AZ regional transfer cost**, which costs `$0.010 per GB - regional data transfer - in/out/between EC2 AZs or using elastic IPs or ELB` as stated by the AWS Bill.
+
+AWS also answers this in the VPC FAQ:
+
+```
+No. When using public IP addresses, all communication between instances and services hosted in AWS use AWS's private network. Packets that originate from the AWS network with a destination on the AWS network stay on the AWS global network, except traffic to or from AWS China Regions.
+```
 
 #### Other Ideas?
 
 - [X] Write a script to delete all AMIs.
 - [X] Show instance-id in frontend to see which instance is receiving the frontend request.
 - [ ] Patching Jenkins AMI with low/zero downtime? (Lifecycle hook and provisioner for health check? Or use ASG?)
-- [ ] Mount an EBS volume to persist /jenkins_home data, patch Jenkins master using agent.
-- [ ] A 404 app page to view 404 request count in dashboard.
 - [ ] Split packer, Jenkins jobs to their own separate repository.
 
 #### Journal
