@@ -26,21 +26,6 @@ unzip terraform_1.7.5_linux_amd64.zip
 mv terraform /usr/bin/terraform
 rm terraform_1.7.5_linux_amd64.zip
 
-# Install AWS CLI if not already installed:
-if ! command -v aws && [ ! -f /usr/local/bin/aws ]; then
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  unzip awscliv2.zip
-  ./aws/install
-  rm -rf awscliv2.zip aws
-fi
-
-# Install docker if not already installed
-if ! command -v docker; then
-  sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  sudo yum install -y docker-ce docker-ce-cli containerd.io
-  systemctl enable docker --now
-fi
-
 # Install Jenkins
 wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
