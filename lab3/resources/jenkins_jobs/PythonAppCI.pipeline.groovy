@@ -4,6 +4,10 @@ pipeline {
     agent {
         label 'ec2-agent'
     }
+    environment {
+        DOCKER_IMAGE = 'app'
+        DOCKER_REPO = 'public.ecr.aws/j7u4k4y6'
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -45,19 +49,19 @@ pipeline {
         stage('Docker Login') {
             steps {
                 script {
-                    sh '''
+                    sh """
                     echo $(aws ecr-public get-login-password --region us-east-1) | \
-                        docker login --username AWS --password-stdin public.ecr.aws/j7u4k4y6
-                    '''
+                        docker login --username AWS --password-stdin $DOCKER_REPO
+                    """
                 }
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh '''
-                    docker build -t app .
-                    '''
+                    sh """
+                    docker build -t $DOCKER_IMAGE .
+                    """
                 }
             }
         }
@@ -65,10 +69,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker tag app:latest public.ecr.aws/j7u4k4y6/app:latest
-                    docker push public.ecr.aws/j7u4k4y6/app:latest
-                    docker tag app:latest public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
-                    docker push public.ecr.aws/j7u4k4y6/app:${GIT_COMMIT}
+                    docker tag $DOCKER_IMAGE:latest $DOCKER_REPO/$DOCKER_IMAGE:latest
+                    docker push $DOCKER_REPO/$DOCKER_IMAGE:latest
+                    docker tag $DOCKER_IMAGE:latest $DOCKER_REPO/$DOCKER_IMAGE:$GIT_COMMIT
+                    docker push $DOCKER_REPO/$DOCKER_IMAGE:$GIT_COMMIT
                     """
                 }
             }
