@@ -21,7 +21,7 @@ pipeline {
             steps{
                 script {
                     def scannerHome = tool 'sonar-scanner'
-                    withSonarQubeEnv('SonarCloud Server') {
+                    withSonarQubeEnv('SonarQube Server') {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
@@ -49,31 +49,31 @@ pipeline {
         stage('Docker Login') {
             steps {
                 script {
-                    sh """
+                    sh '''
                     echo $(aws ecr-public get-login-password --region us-east-1) | \
                         docker login --username AWS --password-stdin $DOCKER_REPO
-                    """
+                    '''
                 }
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh """
+                    sh '''
                     docker build -t $DOCKER_IMAGE .
-                    """
+                    '''
                 }
             }
         }
         stage('Tag and Push Docker Image') {
             steps {
                 script {
-                    sh """
+                    sh '''
                     docker tag $DOCKER_IMAGE:latest $DOCKER_REPO/$DOCKER_IMAGE:latest
                     docker push $DOCKER_REPO/$DOCKER_IMAGE:latest
                     docker tag $DOCKER_IMAGE:latest $DOCKER_REPO/$DOCKER_IMAGE:$GIT_COMMIT
                     docker push $DOCKER_REPO/$DOCKER_IMAGE:$GIT_COMMIT
-                    """
+                    '''
                 }
             }
         }
