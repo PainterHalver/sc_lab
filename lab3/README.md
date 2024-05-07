@@ -94,13 +94,13 @@ App pipelines:
 - 🟩Use SonarQube to scan app source code, build Docker image and push to ECR
 - 🟩Deploy new app version (Can use CodeDeploy) => Using terraform, apply new launch template version
   Patching with new base AMI (e.g., by running the terraform pipeline)
-- 🟩Jumphost, 🟨Jenkins, 🟩app should be patched easily without affecting server data
+- 🟩Jumphost, 🟩Jenkins, 🟩app should be patched easily without affecting server data
 
 #### Checklist
 
 🟩AMIs are built.
-🟨Instances are placed in correct subnets.
-🟨Instances are running appropriate AMI.
+🟩Instances are placed in correct subnets.
+🟩Instances are running appropriate AMI.
 🟨Can access each instance via SSH.
 🟩Can access Jenkins, SonarQube, and App ui.
 🟨App is functioning correctly.
