@@ -21,6 +21,14 @@ resource "aws_security_group" "alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  // TODO: Workaround for VPN blocking port 80, delete this
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -34,7 +42,7 @@ resource "aws_security_group" "alb" {
 // HTTP LISTENER
 resource "aws_lb_listener" "sonarqube" {
   load_balancer_arn = aws_lb.sonarqube.arn
-  port              = 80
+  port              = 443
   protocol          = "HTTP"
   default_action {
     type             = "forward"

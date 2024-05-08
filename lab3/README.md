@@ -198,7 +198,7 @@ App pipelines:
 - **Build/Build{App,Jenkins,Jumphost}AMI**: Triggered automatically after the BuildBaseAMI pipeline successfully finished. Use packer to query the latest BaseAMI and build App/Jenkins/Jumphost AMI.
 - **Deploy/Deploy{Jumphost,JenkinsMaster}**: Run terraform, replacing EC2 instances to use laest AMI version.
 - **PythonApp/PythonAppCI**: Check GitHub repo changes (pull every 3 hours). If has changes -> clone the source code -> run sonarqube -> build docker image -> push to ECR.
-- **PythonApp/PythonAppCD**: Run manually for safety, run terraform apply to deploy new launch template.
+- **PythonApp/PythonAppCD**: Run manually, run terraform apply to deploy new launch template.
 
 #### Enabling Swap can help with memory issue
 
