@@ -1,5 +1,5 @@
 resource "aws_lb" "app" {
-  name               = "app-alb"
+  name               = "python-app-alb"
   internal           = false
   load_balancer_type = "application"
   subnets            = [var.public_subnet_id, var.other_public_subnet_id]
