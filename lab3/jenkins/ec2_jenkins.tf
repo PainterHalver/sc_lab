@@ -11,10 +11,6 @@ resource "aws_instance" "jenkins" {
     volume_size           = 10
   }
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
   user_data = templatefile("${path.module}/user-data/jenkins_master.sh.tftpl", {
     admin_password             = var.admin_password
     agent_region               = var.aws_region
